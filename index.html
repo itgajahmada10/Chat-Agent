@@ -51,7 +51,7 @@ html_content = '''<!DOCTYPE html>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: \'Inter\', sans-serif;
+      font-family: 'Inter', sans-serif;
       background: var(--bg-body);
       color: var(--text-main);
       min-height: 100vh;
@@ -90,7 +90,7 @@ html_content = '''<!DOCTYPE html>
       justify-content: space-between;
     }
     .sidebar-header h2 {
-      font-family: \'Poppins\', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 15px;
       color: var(--primary);
     }
@@ -103,7 +103,7 @@ html_content = '''<!DOCTYPE html>
       gap: 20px;
     }
     .sidebar-section h3 {
-      font-family: \'Poppins\', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.8px;
@@ -158,7 +158,7 @@ html_content = '''<!DOCTYPE html>
       color: var(--text-main);
       cursor: pointer;
       transition: all 0.2s;
-      font-family: \'Inter\', sans-serif;
+      font-family: 'Inter', sans-serif;
     }
     .prompt-btn:hover { background: #f5f3ff; border-color: var(--primary); color: var(--primary); }
     .prompt-btn:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
@@ -173,7 +173,7 @@ html_content = '''<!DOCTYPE html>
       padding: 8px 12px;
       cursor: pointer;
       font-size: 13px;
-      font-family: \'Poppins\', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 600;
       align-items: center;
       gap: 6px;
@@ -216,7 +216,7 @@ html_content = '''<!DOCTYPE html>
       flex-shrink: 0;
     }
     .chat-header h1 {
-      font-family: \'Poppins\', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 15px;
       color: #ffffff;
       margin: 0;
@@ -232,7 +232,7 @@ html_content = '''<!DOCTYPE html>
       color: rgba(255,255,255,0.75);
       padding: 3px 9px;
       border-radius: 5px;
-      font-family: \'JetBrains Mono\', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       cursor: help;
       flex-shrink: 0;
@@ -268,7 +268,7 @@ html_content = '''<!DOCTYPE html>
       margin-bottom: 16px;
     }
     #empty-state h3 {
-      font-family: \'Poppins\', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 16px;
       color: #475569;
       margin-bottom: 6px;
@@ -283,7 +283,7 @@ html_content = '''<!DOCTYPE html>
       border-radius: 7px;
       display: flex; align-items: center; justify-content: center;
       font-size: 11px; font-weight: 700; flex-shrink: 0;
-      font-family: \'Poppins\', sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
     .avatar.bot { background: #e2e8f0; color: var(--primary); }
     .avatar.user { background: var(--accent-blue); color: white; }
@@ -363,7 +363,7 @@ html_content = '''<!DOCTYPE html>
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #2d3139;
-      font-family: \'JetBrains Mono\', monospace;
+      font-family: 'JetBrains Mono', monospace;
     }
     .btn-copy-code {
       background: transparent;
@@ -374,7 +374,7 @@ html_content = '''<!DOCTYPE html>
       font-weight: 500;
       padding: 2px 8px;
       border-radius: 4px;
-      font-family: \'Inter\', sans-serif;
+      font-family: 'Inter', sans-serif;
     }
     .btn-copy-code:hover { background: rgba(255,255,255,0.1); color: #ffffff; }
 
@@ -390,7 +390,7 @@ html_content = '''<!DOCTYPE html>
       color: #abb2bf !important;
       padding: 0;
       font-size: 12.5px;
-      font-family: \'JetBrains Mono\', monospace;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     /* File Preview */
@@ -456,7 +456,7 @@ html_content = '''<!DOCTYPE html>
       background: #ffffff;
       color: var(--text-main);
       font-size: 14px;
-      font-family: \'Inter\', sans-serif;
+      font-family: 'Inter', sans-serif;
       resize: none;
       max-height: 130px;
       outline: none;
@@ -473,7 +473,7 @@ html_content = '''<!DOCTYPE html>
       padding: 11px 18px;
       border-radius: 8px;
       cursor: pointer;
-      font-family: \'Poppins\', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 13px;
       font-weight: 600;
       border: none;
@@ -533,11 +533,10 @@ html_content = '''<!DOCTYPE html>
 </head>
 <body>
 
-<div class="sidebar-overlay id="sidebar-overlay" onclick="closeSidebar()"></div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <div class="app-container">
   
-  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar" role="navigation" aria-label="Workspace navigation">
     <div class="sidebar-header">
       <h2>Workspace Directory</h2>
@@ -547,20 +546,20 @@ html_content = '''<!DOCTYPE html>
         <h3>Project Sedang Berjalan</h3>
         <div class="project-list" id="project-list" role="listbox" aria-label="Daftar project">
           <div class="project-item active" role="option" aria-selected="true" tabindex="0"
-               onclick="selectProject(this, \'n8n-automation\', \'n8n Automation\')"
-               onkeydown="if(event.key===\'Enter\')selectProject(this,\'n8n-automation\',\'n8n Automation\')">
+               onclick="selectProject(this, 'n8n-automation', 'n8n Automation')"
+               onkeydown="if(event.key==='Enter')selectProject(this,'n8n-automation','n8n Automation')">
             <span class="project-name">n8n Automation</span>
             <span class="project-status status-active">Active</span>
           </div>
           <div class="project-item" role="option" aria-selected="false" tabindex="0"
-               onclick="selectProject(this, \'gsheet-sync\', \'Google Sheets Sync\')"
-               onkeydown="if(event.key===\'Enter\')selectProject(this,\'gsheet-sync\',\'Google Sheets Sync\')">
+               onclick="selectProject(this, 'gsheet-sync', 'Google Sheets Sync')"
+               onkeydown="if(event.key==='Enter')selectProject(this,'gsheet-sync','Google Sheets Sync')">
             <span class="project-name">Google Sheets Sync</span>
             <span class="project-status status-active">Active</span>
           </div>
           <div class="project-item" role="option" aria-selected="false" tabindex="0"
-               onclick="selectProject(this, \'ai-debugger\', \'AI Code Debugger\')"
-               onkeydown="if(event.key===\'Enter\')selectProject(this,\'ai-debugger\',\'AI Code Debugger\')">
+               onclick="selectProject(this, 'ai-debugger', 'AI Code Debugger')"
+               onkeydown="if(event.key==='Enter')selectProject(this,'ai-debugger','AI Code Debugger')">
             <span class="project-name">AI Code Debugger</span>
             <span class="project-status status-planning">Planning</span>
           </div>
@@ -570,18 +569,16 @@ html_content = '''<!DOCTYPE html>
       <div class="sidebar-section">
         <h3>Quick Prompt Templates</h3>
         <div class="prompt-grid">
-          <button class="prompt-btn" onclick="applyTemplate(\'Tolong analisis potongan file/script berikut ini:\')">🔍 Analisis Script/File</button>
-          <button class="prompt-btn" onclick="applyTemplate(\'Tolong perbaiki atau rapikan struktur database/tabel berikut:\')">📊 Rapikan Data Tabel</button>
-          <button class="prompt-btn" onclick="applyTemplate(\'Ubah struktur data mentah ini menjadi JSON valid:\')">🛠️ Konversi ke JSON</button>
+          <button class="prompt-btn" onclick="applyTemplate('Tolong analisis potongan file/script berikut ini:')">🔍 Analisis Script/File</button>
+          <button class="prompt-btn" onclick="applyTemplate('Tolong perbaiki atau rapikan struktur database/tabel berikut:')">📊 Rapikan Data Tabel</button>
+          <button class="prompt-btn" onclick="applyTemplate('Ubah struktur data mentah ini menjadi JSON valid:')">🛠️ Konversi ke JSON</button>
         </div>
       </div>
     </div>
   </aside>
 
-  <!-- CHAT WINDOW -->
   <div class="chat-wrapper">
     <div class="chat-header">
-      <!-- Mobile: tombol buka sidebar -->
       <button class="btn-sidebar-toggle" id="sidebar-toggle-btn" onclick="openSidebar()" aria-label="Buka menu project" style="display:none;">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         Menu
@@ -621,7 +618,7 @@ html_content = '''<!DOCTYPE html>
     <div class="input-area">
       <input type="file" id="file-input" accept="image/*,.pdf,.csv,.xlsx,.docx" style="display: none;" onchange="handleFileSelect(event)">
       
-      <button class="btn-icon-only" title="Upload File (Gambar, PDF, Excel, CSV)" aria-label="Upload file" onclick="document.getElementById(\'file-input\').click()">
+      <button class="btn-icon-only" title="Upload File (Gambar, PDF, Excel, CSV)" aria-label="Upload file" onclick="document.getElementById('file-input').click()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
         </svg>
@@ -655,7 +652,7 @@ html_content = '''<!DOCTYPE html>
   };
 
   renderer.code = function(code, language) {
-    const lang = language || \'plaintext\';
+    const lang = language || 'plaintext';
     const highlighted = hljs.getLanguage(lang) ? hljs.highlight(code, { language: lang }).value : hljs.highlightAuto(code).value;
     return `
       <div class="code-container">
@@ -670,106 +667,103 @@ html_content = '''<!DOCTYPE html>
   marked.setOptions({ renderer, breaks: true, gfm: true });
 
   function copyToClipboard(button) {
-    const code = button.closest(\'.code-container\').querySelector(\'pre\').textContent;
+    const code = button.closest('.code-container').querySelector('pre').textContent;
     navigator.clipboard.writeText(code).then(() => {
-      button.textContent = \'✓ Tersalin\';
-      button.style.color = \'#10b981\';
-      setTimeout(() => { button.textContent = \'Salin Kode\'; button.style.color = \'\'; }, 2000);
+      button.textContent = '✓ Tersalin';
+      button.style.color = '#10b981';
+      setTimeout(() => { button.textContent = 'Salin Kode'; button.style.color = ''; }, 2000);
     });
   }
 
   function generateUUID() {
-    if (typeof crypto !== \'undefined\' && crypto.randomUUID) return crypto.randomUUID();
-    return \'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx\'.replace(/[xy]/g, c => {
-      const r = Math.random() * 16 | 0, v = c === \'x\' ? r : (r & 0x3 | 0x8);
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
   }
 
   function formatTime() {
     const now = new Date();
-    return now.toLocaleTimeString(\'id-ID\', { hour: \'2-digit\', minute: \'2-digit\' });
+    return now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
   }
 
   // State
-  const USER_NAME = \'PU\'; // Bisa diganti dengan var config atau localStorage
-  let sessionId = localStorage.getItem(\'ai_chat_session_id\') || generateUUID();
-  localStorage.setItem(\'ai_chat_session_id\', sessionId);
-  document.getElementById(\'session-label\').textContent = \'SID-\' + sessionId.slice(0, 6).toUpperCase();
+  const USER_NAME = 'PU';
+  let sessionId = localStorage.getItem('ai_chat_session_id') || generateUUID();
+  localStorage.setItem('ai_chat_session_id', sessionId);
+  document.getElementById('session-label').textContent = 'SID-' + sessionId.slice(0, 6).toUpperCase();
 
-  let activeProjectId = \'n8n-automation\';
-  let activeProjectName = \'n8n Automation\';
+  let activeProjectId = 'n8n-automation';
+  let activeProjectName = 'n8n Automation';
   let isSending = false;
 
-  const WEBHOOK_URL = \'https://n8.waruna-group.co.id/webhook/ai-chat-endpoint\';
-  const chatBox = document.getElementById(\'chat-box\');
-  const emptyState = document.getElementById(\'empty-state\');
-  const textarea = document.getElementById(\'user-input\');
-  const sendBtn = document.getElementById(\'send-btn\');
-  const sendLabel = document.getElementById(\'send-label\');
-  const sendIcon = document.getElementById(\'send-icon\');
-  const previewContainer = document.getElementById(\'preview-container\');
-  const previewWrapper = document.getElementById(\'preview-wrapper\');
-  const fileDetails = document.getElementById(\'file-details\');
-  const fileWarning = document.getElementById(\'file-warning\');
+  const WEBHOOK_URL = 'https://n8.waruna-group.co.id/webhook/ai-chat-endpoint';
+  const chatBox = document.getElementById('chat-box');
+  const emptyState = document.getElementById('empty-state');
+  const textarea = document.getElementById('user-input');
+  const sendBtn = document.getElementById('send-btn');
+  const sendLabel = document.getElementById('send-label');
+  const sendIcon = document.getElementById('send-icon');
+  const previewContainer = document.getElementById('preview-container');
+  const previewWrapper = document.getElementById('preview-wrapper');
+  const fileDetails = document.getElementById('file-details');
+  const fileWarning = document.getElementById('file-warning');
 
-  let activeFileBase64 = null, activeFileName = \'\', activeFileType = \'\';
+  let activeFileBase64 = null, activeFileName = '', activeFileType = '';
 
   const MAX_FILE_SIZE_MB = 10;
 
-  window.addEventListener(\'DOMContentLoaded\', () => {
+  window.addEventListener('DOMContentLoaded', () => {
     loadHistoryFromGSheet();
-    // Tampilkan toggle button di mobile
     if (window.innerWidth <= 768) {
-      document.getElementById(\'sidebar-toggle-btn\').style.display = \'flex\';
+      document.getElementById('sidebar-toggle-btn').style.display = 'flex';
     }
   });
 
-  // Mobile sidebar
   function openSidebar() {
-    document.getElementById(\'sidebar\').classList.add(\'open\');
-    document.getElementById(\'sidebar-overlay\').classList.add(\'visible\');
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('visible');
   }
   function closeSidebar() {
-    document.getElementById(\'sidebar\').classList.remove(\'open\');
-    document.getElementById(\'sidebar-overlay\').classList.remove(\'visible\');
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('visible');
   }
 
-  textarea.addEventListener(\'input\', () => {
-    textarea.style.height = \'auto\';
-    textarea.style.height = Math.min(textarea.scrollHeight, 130) + \'px\';
+  textarea.addEventListener('input', () => {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 130) + 'px';
   });
 
-  // ====== PROJECT SWITCH ======
   async function selectProject(element, projectId, projectName) {
-    if (element.classList.contains(\'active\') || isSending) return;
+    if (element.classList.contains('active') || isSending) return;
 
-    document.querySelectorAll(\'.project-item\').forEach(i => {
-      i.classList.remove(\'active\');
-      i.setAttribute(\'aria-selected\', \'false\');
+    document.querySelectorAll('.project-item').forEach(i => {
+      i.classList.remove('active');
+      i.setAttribute('aria-selected', 'false');
     });
-    element.classList.add(\'active\', \'loading\');
-    element.setAttribute(\'aria-selected\', \'true\');
+    element.classList.add('active', 'loading');
+    element.setAttribute('aria-selected', 'true');
 
     activeProjectId = projectId;
     activeProjectName = projectName;
-    document.getElementById(\'active-project-title\').textContent = projectName;
+    document.getElementById('active-project-title').textContent = projectName;
 
-    chatBox.innerHTML = \'\';
-    const spinner = document.createElement(\'div\');
-    spinner.style.cssText = \'text-align:center;padding:30px;color:#94a3b8;font-size:13px;\';
-    spinner.textContent = \'Memuat riwayat...\';
+    chatBox.innerHTML = '';
+    const spinner = document.createElement('div');
+    spinner.style.cssText = 'text-align:center;padding:30px;color:#94a3b8;font-size:13px;';
+    spinner.textContent = 'Memuat riwayat...';
     chatBox.appendChild(spinner);
 
     await loadHistoryFromGSheet();
-    element.classList.remove(\'loading\');
+    element.classList.remove('loading');
     closeSidebar();
   }
 
-  textarea.addEventListener(\'paste\', e => {
+  textarea.addEventListener('paste', e => {
     const items = (e.clipboardData || e.originalEvent.clipboardData).items;
     for (const item of items) {
-      if (item.kind === \'file\') processFile(item.getAsFile());
+      if (item.kind === 'file') processFile(item.getAsFile());
     }
   });
 
@@ -779,11 +773,11 @@ html_content = '''<!DOCTYPE html>
   }
 
   function processFile(file) {
-    fileWarning.style.display = \'none\';
+    fileWarning.style.display = 'none';
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
       fileWarning.textContent = `⚠️ File terlalu besar (maks ${MAX_FILE_SIZE_MB}MB). Pilih file lain.`;
-      fileWarning.style.display = \'block\';
-      previewContainer.style.display = \'flex\';
+      fileWarning.style.display = 'block';
+      previewContainer.style.display = 'flex';
       return;
     }
     const reader = new FileReader();
@@ -791,67 +785,67 @@ html_content = '''<!DOCTYPE html>
     activeFileType = file.type;
     reader.onload = e => {
       activeFileBase64 = e.target.result;
-      previewWrapper.innerHTML = \'\';
-      if (file.type.startsWith(\'image/\')) {
+      previewWrapper.innerHTML = '';
+      if (file.type.startsWith('image/')) {
         previewWrapper.innerHTML = `<img src="${activeFileBase64}" alt="Preview"><button class="btn-remove-preview" aria-label="Hapus file" onclick="clearFilePreview()">×</button>`;
       } else {
-        const ext = file.name.split(\'.\').pop().toUpperCase();
+        const ext = file.name.split('.').pop().toUpperCase();
         previewWrapper.innerHTML = `<div class="doc-preview-box">📄<br>${ext}</div><button class="btn-remove-preview" aria-label="Hapus file" onclick="clearFilePreview()">×</button>`;
       }
-      fileDetails.textContent = file.name + \' (\' + (file.size / 1024).toFixed(1) + \' KB)\';
-      previewContainer.style.display = \'flex\';
+      fileDetails.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+      previewContainer.style.display = 'flex';
     };
     reader.readAsDataURL(file);
   }
 
   function clearFilePreview() {
-    activeFileBase64 = null; activeFileName = \'\'; activeFileType = \'\';
-    previewWrapper.innerHTML = \'\';
-    previewContainer.style.display = \'none\';
-    fileWarning.style.display = \'none\';
-    document.getElementById(\'file-input\').value = \'\';
+    activeFileBase64 = null; activeFileName = ''; activeFileType = '';
+    previewWrapper.innerHTML = '';
+    previewContainer.style.display = 'none';
+    fileWarning.style.display = 'none';
+    document.getElementById('file-input').value = '';
   }
 
   function applyTemplate(text) {
-    textarea.value = text + \' \';
+    textarea.value = text + ' ';
     textarea.focus();
-    textarea.style.height = \'auto\';
-    textarea.style.height = Math.min(textarea.scrollHeight, 130) + \'px\';
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 130) + 'px';
     closeSidebar();
   }
 
-  function appendMessage(role, content, fileBase64 = null, fileName = \'\', fileType = \'\') {
-    emptyState.style.display = \'none\';
-    const row = document.createElement(\'div\');
-    row.classList.add(\'msg-row\', role);
+  function appendMessage(role, content, fileBase64 = null, fileName = '', fileType = '') {
+    emptyState.style.display = 'none';
+    const row = document.createElement('div');
+    row.classList.add('msg-row', role);
 
-    const avatar = document.createElement(\'div\');
-    avatar.classList.add(\'avatar\', role);
-    avatar.textContent = role === \'user\' ? USER_NAME : \'AI\';
-    avatar.setAttribute(\'aria-hidden\', \'true\');
+    const avatar = document.createElement('div');
+    avatar.classList.add('avatar', role);
+    avatar.textContent = role === 'user' ? USER_NAME : 'AI';
+    avatar.setAttribute('aria-hidden', 'true');
 
-    const col = document.createElement(\'div\');
-    col.classList.add(\'msg-col\');
+    const col = document.createElement('div');
+    col.classList.add('msg-col');
 
-    const bubble = document.createElement(\'div\');
-    bubble.classList.add(\'bubble\', role);
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble', role);
 
-    if (role === \'bot\') {
+    if (role === 'bot') {
       bubble.innerHTML = marked.parse(content);
     } else {
       bubble.textContent = content;
       if (fileBase64) {
-        const att = document.createElement(\'div\');
-        att.classList.add(\'media-attachment\');
-        att.innerHTML = fileType.startsWith(\'image/\') ? `<img src="${fileBase64}" alt="attachment">` : `📄 <strong>${fileName}</strong>`;
+        const att = document.createElement('div');
+        att.classList.add('media-attachment');
+        att.innerHTML = fileType.startsWith('image/') ? `<img src="${fileBase64}" alt="attachment">` : `📄 <strong>${fileName}</strong>`;
         bubble.appendChild(att);
       }
     }
 
-    const ts = document.createElement(\'span\');
-    ts.classList.add(\'msg-timestamp\');
+    const ts = document.createElement('span');
+    ts.classList.add('msg-timestamp');
     ts.textContent = formatTime();
-    ts.setAttribute(\'aria-label\', \'Dikirim \' + ts.textContent);
+    ts.setAttribute('aria-label', 'Dikirim ' + ts.textContent);
 
     col.appendChild(bubble);
     col.appendChild(ts);
@@ -863,15 +857,15 @@ html_content = '''<!DOCTYPE html>
   }
 
   function showLoadingIndicator() {
-    const row = document.createElement(\'div\');
-    row.classList.add(\'msg-row\', \'bot\', \'loading-row\');
-    const avatar = document.createElement(\'div\');
-    avatar.classList.add(\'avatar\', \'bot\');
-    avatar.textContent = \'AI\';
-    const col = document.createElement(\'div\');
-    col.classList.add(\'msg-col\');
-    const bubble = document.createElement(\'div\');
-    bubble.classList.add(\'bubble\', \'bot\');
+    const row = document.createElement('div');
+    row.classList.add('msg-row', 'bot', 'loading-row');
+    const avatar = document.createElement('div');
+    avatar.classList.add('avatar', 'bot');
+    avatar.textContent = 'AI';
+    const col = document.createElement('div');
+    col.classList.add('msg-col');
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble', 'bot');
     bubble.innerHTML = `<div class="typing-indicator" aria-label="AI sedang mengetik"><span></span><span></span><span></span></div>`;
     col.appendChild(bubble);
     row.appendChild(avatar);
@@ -885,32 +879,32 @@ html_content = '''<!DOCTYPE html>
     isSending = loading;
     sendBtn.disabled = loading;
     if (loading) {
-      sendLabel.textContent = \'Mengirim\';
-      sendIcon.style.display = \'none\';
+      sendLabel.textContent = 'Mengirim';
+      sendIcon.style.display = 'none';
     } else {
-      sendLabel.textContent = \'KIRIM\';
-      sendIcon.style.display = \'\';
+      sendLabel.textContent = 'KIRIM';
+      sendIcon.style.display = '';
     }
   }
 
   async function loadHistoryFromGSheet() {
     try {
       const res = await fetch(`${WEBHOOK_URL}?sessionId=${sessionId}&projectId=${activeProjectId}&action=loadHistory`);
-      chatBox.innerHTML = \'\';
+      chatBox.innerHTML = '';
       chatBox.appendChild(emptyState);
-      emptyState.style.display = \'flex\';
+      emptyState.style.display = 'flex';
       if (res.ok) {
         const data = await res.json();
         if (data?.history?.length) {
-          emptyState.style.display = \'none\';
+          emptyState.style.display = 'none';
           data.history.forEach(msg => appendMessage(msg.role, msg.content, msg.fileBase64, msg.fileName, msg.fileType));
         }
       }
     } catch (err) {
-      chatBox.innerHTML = \'\';
+      chatBox.innerHTML = '';
       chatBox.appendChild(emptyState);
-      emptyState.style.display = \'flex\';
-      console.warn(\'Gagal sinkronisasi riwayat:\', err);
+      emptyState.style.display = 'flex';
+      console.warn('Gagal sinkronisasi riwayat:', err);
     }
   }
 
@@ -919,9 +913,9 @@ html_content = '''<!DOCTYPE html>
     if ((!text && !activeFileBase64) || isSending) return;
 
     const fileToSend = activeFileBase64, nameToSend = activeFileName, typeToSend = activeFileType;
-    appendMessage(\'user\', text, fileToSend, nameToSend, typeToSend);
-    textarea.value = \'\';
-    textarea.style.height = \'auto\';
+    appendMessage('user', text, fileToSend, nameToSend, typeToSend);
+    textarea.value = '';
+    textarea.style.height = 'auto';
     clearFilePreview();
     setSendingState(true);
     const loadingBubble = showLoadingIndicator();
@@ -929,8 +923,8 @@ html_content = '''<!DOCTYPE html>
     try {
       const systemContext = `[Context: Project "${activeProjectName}"]. `;
       const res = await fetch(WEBHOOK_URL, {
-        method: \'POST\',
-        headers: { \'Content-Type\': \'application/json\' },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chatInput: systemContext + text,
           sessionId, projectId: activeProjectId,
@@ -941,10 +935,10 @@ html_content = '''<!DOCTYPE html>
       const data = await res.json();
       loadingBubble.remove();
       const reply = data?.output || data?.text || data?.response || JSON.stringify(data);
-      appendMessage(\'bot\', reply);
+      appendMessage('bot', reply);
     } catch (err) {
       loadingBubble.remove();
-      appendMessage(\'bot\', `⚠️ **Koneksi gagal:**\n\`\`\`\n${err.message}\n\`\`\``);
+      appendMessage('bot', `⚠️ **Koneksi gagal:**\n\`\`\`\n${err.message}\n\`\`\``);
     }
 
     setSendingState(false);
@@ -952,15 +946,15 @@ html_content = '''<!DOCTYPE html>
   }
 
   function clearChat() {
-    if (!confirm(\'Reset session ini? Riwayat lokal akan dihapus.\')) return;
-    chatBox.innerHTML = \'\';
+    if (!confirm('Reset session ini? Riwayat lokal akan dihapus.')) return;
+    chatBox.innerHTML = '';
     chatBox.appendChild(emptyState);
-    emptyState.style.display = \'flex\';
+    emptyState.style.display = 'flex';
     clearFilePreview();
   }
 
-  textarea.addEventListener(\'keydown\', e => {
-    if (e.key === \'Enter\' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  textarea.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
 </script>
 
