@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -26,26 +26,61 @@
       --accent-blue: #0284c7;
     }
 
-    /* === DARK MODE === */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-body: #0f172a;
-        --bg-card: #1e293b;
-        --border-color: #334155;
-        --text-main: #e2e8f0;
-        --text-muted: #94a3b8;
-        --bubble-ai: #1e293b;
-        --bubble-user: #4e2b5c;
-      }
-      #chat-box { background: #1e293b !important; }
-      .sidebar-header { background: #1e293b !important; }
-      #user-input { background: #1e293b !important; color: var(--text-main) !important; }
-      .input-area { background: #172032 !important; }
-      .project-item { background: #172032 !important; border-color: #334155 !important; }
-      .project-item:hover { background: #2d1a3a !important; }
-      .prompt-btn { background: #1e293b !important; color: var(--text-main) !important; }
-      .prompt-btn:hover { background: #2d1a3a !important; }
-      .btn-icon-only { background: #1e293b !important; color: var(--text-muted) !important; }
+    /* === DARK MODE (Manual Toggle) === */
+    [data-theme="dark"] {
+      --bg-body: #0f172a;
+      --bg-card: #1e293b;
+      --border-color: #334155;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --bubble-ai: #1e293b;
+      --bubble-user: #4e2b5c;
+    }
+    
+    [data-theme="dark"] #chat-box,
+    [data-theme="dark"] .sidebar-header,
+    [data-theme="dark"] .prompt-btn { 
+      background: #1e293b !important; 
+      color: var(--text-main) !important;
+    }
+    
+    [data-theme="dark"] #user-input,
+    [data-theme="dark"] .input-area,
+    [data-theme="dark"] .project-item,
+    [data-theme="dark"] .btn-icon-only { 
+      background: #172032 !important; 
+    }
+    
+    [data-theme="dark"] #user-input {
+      color: var(--text-main) !important;
+    }
+
+    [data-theme="dark"] .project-item {
+      border-color: #334155 !important;
+    }
+
+    [data-theme="dark"] .project-item:hover,
+    [data-theme="dark"] .prompt-btn:hover { 
+      background: #2d1a3a !important; 
+    }
+
+    [data-theme="dark"] .btn-icon-only { 
+      color: var(--text-muted) !important; 
+      border-color: #334155 !important;
+    }
+    
+    [data-theme="dark"] .btn-icon-only:hover {
+      background: #1e293b !important;
+      color: var(--primary) !important;
+      border-color: var(--primary) !important;
+    }
+
+    [data-theme="dark"] .empty-icon {
+      background: #172032 !important;
+    }
+    
+    [data-theme="dark"] #empty-state h3 {
+      color: #cbd5e1 !important;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -59,6 +94,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     .app-container {
@@ -79,7 +115,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, background-color 0.3s, border-color 0.3s;
     }
     .sidebar-header {
       padding: 18px 20px;
@@ -88,12 +124,16 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      transition: background-color 0.3s, border-color 0.3s;
     }
     .sidebar-header h2 {
       font-family: 'Poppins', sans-serif;
       font-size: 15px;
-      color: var(--primary);
+      color: #9b68ad; /* Adjusted for better visibility in both modes if needed, or keep primary */
     }
+    [data-theme="light"] .sidebar-header h2 { color: var(--primary); }
+    [data-theme="dark"] .sidebar-header h2 { color: #d8b4e2; }
+
     .sidebar-content {
       flex: 1;
       overflow-y: auto;
@@ -126,9 +166,9 @@
     }
     .project-item:hover { border-color: var(--primary); background: #f5f3ff; }
     .project-item.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
+      background: var(--primary) !important;
+      color: white !important;
+      border-color: var(--primary) !important;
     }
     .project-item.active .project-name { color: white; }
     .project-item.active .project-status { background: rgba(255,255,255,0.2); color: white; }
@@ -145,6 +185,10 @@
     .status-active { background: #dcfce7; color: #15803d; }
     .status-planning { background: #fef9c3; color: #a16207; }
 
+    /* Dark Mode overrides for status badges */
+    [data-theme="dark"] .status-active { background: rgba(21, 128, 61, 0.2); color: #4ade80; }
+    [data-theme="dark"] .status-planning { background: rgba(161, 98, 7, 0.2); color: #facc15; }
+
     .prompt-grid { display: flex; flex-direction: column; gap: 6px; }
     .prompt-btn {
       width: 100%;
@@ -159,7 +203,7 @@
       transition: all 0.2s;
       font-family: 'Inter', sans-serif;
     }
-    .prompt-btn:hover { background: #f5f3ff; border-color: var(--primary); color: var(--primary); }
+    .prompt-btn:hover { background: #f5f3ff; border-color: var(--primary); color: var(--primary) !important; }
 
     /* === MOBILE TOGGLE === */
     .btn-sidebar-toggle {
@@ -195,6 +239,7 @@
       flex-direction: column;
       overflow: hidden;
       min-width: 0;
+      transition: background-color 0.3s, border-color 0.3s;
     }
 
     .chat-header {
@@ -224,8 +269,15 @@
       color: rgba(255,255,255,0.65);
       margin: 0;
     }
-    .session-badge {
+    
+    .header-actions {
       margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .session-badge {
       background: rgba(0,0,0,0.2);
       color: rgba(255,255,255,0.75);
       padding: 3px 9px;
@@ -234,6 +286,24 @@
       font-size: 10px;
       cursor: help;
       flex-shrink: 0;
+    }
+
+    /* Theme Toggle Button in Header */
+    .btn-theme-toggle {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-theme-toggle:hover {
+      background: rgba(255,255,255,0.15);
     }
 
     #chat-box {
@@ -245,6 +315,7 @@
       gap: 18px;
       background: var(--bg-card);
       scroll-behavior: smooth;
+      transition: background-color 0.3s;
     }
 
     /* === EMPTY STATE === */
@@ -264,6 +335,7 @@
       border-radius: 16px;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 16px;
+      transition: background-color 0.3s;
     }
     #empty-state h3 {
       font-family: 'Poppins', sans-serif;
@@ -284,6 +356,7 @@
       font-family: 'Poppins', sans-serif;
     }
     .avatar.bot { background: #e2e8f0; color: var(--primary); }
+    [data-theme="dark"] .avatar.bot { background: #334155; color: #e2e8f0; }
     .avatar.user { background: var(--accent-blue); color: white; }
 
     .msg-col { display: flex; flex-direction: column; gap: 4px; max-width: min(85%, 720px); }
@@ -304,7 +377,7 @@
     .bubble.bot {
       background: var(--bubble-ai);
       color: var(--text-main);
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--border-color);
       border-top-left-radius: 3px;
     }
 
@@ -322,12 +395,14 @@
       font-size: 13px;
     }
     .bubble.bot th, .bubble.bot td {
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--border-color);
       padding: 7px 12px;
       text-align: left;
     }
-    .bubble.bot th { background: #f1f5f9; font-weight: 600; }
-    .bubble.bot tr:nth-child(even) td { background: #fafafa; }
+    .bubble.bot th { background: rgba(0,0,0,0.05); font-weight: 600; }
+    [data-theme="dark"] .bubble.bot th { background: rgba(255,255,255,0.05); }
+    .bubble.bot tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+    [data-theme="dark"] .bubble.bot tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
 
     .media-attachment {
       background: rgba(0,0,0,0.04);
@@ -387,6 +462,8 @@
       align-items: center;
       gap: 12px;
     }
+    [data-theme="dark"] .preview-container { background: #172032; }
+    
     .preview-wrapper { position: relative; display: inline-block; }
     .preview-wrapper img { max-height: 70px; border-radius: 6px; border: 1px solid var(--border-color); display: block; }
     .doc-preview-box {
@@ -395,6 +472,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       font-size: 10px; font-weight: bold; color: var(--text-muted); border: 1px solid var(--border-color);
     }
+    [data-theme="dark"] .doc-preview-box { background: #334155; }
     .btn-remove-preview {
       position: absolute;
       top: -5px; right: -5px;
@@ -425,6 +503,7 @@
       gap: 10px;
       align-items: flex-end;
       flex-shrink: 0;
+      transition: background-color 0.3s;
     }
     #user-input {
       flex: 1;
@@ -439,7 +518,7 @@
       max-height: 130px;
       outline: none;
       line-height: 1.5;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s;
     }
     #user-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(78,43,92,0.1); }
     #user-input::placeholder { color: #94a3b8; }
@@ -558,13 +637,21 @@
         <h1 id="active-project-title">n8n Automation</h1>
         <p>Data & Automation Assistant</p>
       </div>
-      <span class="session-badge" id="session-label" title="Session ID aktif">SID-XXXX</span>
+      
+      <div class="header-actions">
+        <span class="session-badge" id="session-label" title="Session ID aktif">SID-XXXX</span>
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode" title="Toggle Theme">
+          <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div id="chat-box" role="log" aria-live="polite" aria-label="Riwayat percakapan">
       <div id="empty-state">
         <div class="empty-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4e2b5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
         </div>
@@ -614,6 +701,29 @@
   // KOREKSI FUNDAMENTAL: Kita tidak lagi memaksakan custom renderer yang rentan rusak.
   // Marked.js akan berjalan secara standar, lalu kita bungkus kode dengan DOM Manipulation.
   marked.setOptions({ breaks: true, gfm: true });
+
+  /* === THEME TOGGLE LOGIC === */
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    const icon = document.getElementById('theme-icon');
+    if (theme === 'dark') {
+      icon.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+    } else {
+      icon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+    }
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('ai_workspace_theme', newTheme);
+    applyTheme(newTheme);
+  }
+
+  // Initialize theme on load
+  const savedTheme = localStorage.getItem('ai_workspace_theme') || 'light';
+  applyTheme(savedTheme);
+
 
   function copyToClipboard(button) {
     const code = button.closest('.code-container').querySelector('pre code').textContent;
