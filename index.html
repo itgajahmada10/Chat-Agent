@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
+  <!-- Parser Markdown & Highlight JS -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -37,13 +38,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 30px 20px;
+      padding: 20px;
     }
 
-    /* ====== WRAPPER UTAMA ====== */
     .chat-wrapper {
       width: 100%;
-      max-width: 950px; /* Diperlebar untuk tabel dan kode */
+      max-width: 950px;
       background: var(--bg-card);
       border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -54,7 +54,6 @@
       overflow: hidden;
     }
 
-    /* ====== HEADER ====== */
     .chat-header {
       background: var(--primary);
       padding: 16px 24px;
@@ -90,7 +89,6 @@
       font-size: 11px;
     }
 
-    /* ====== CHAT BOX ====== */
     #chat-box {
       flex: 1;
       overflow-y: auto;
@@ -99,14 +97,13 @@
       flex-direction: column;
       gap: 20px;
       background: #ffffff;
+      scroll-behavior: smooth;
     }
     
-    /* Scrollbar */
     #chat-box::-webkit-scrollbar { width: 6px; }
     #chat-box::-webkit-scrollbar-track { background: #f1f5f9; }
     #chat-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
-    /* ====== MESSAGES ====== */
     .msg-row { display: flex; gap: 12px; align-items: flex-start; }
     .msg-row.user { flex-direction: row-reverse; }
 
@@ -123,13 +120,14 @@
       max-width: 80%;
       padding: 14px 18px;
       border-radius: 10px;
-      font-size: 14.5px; /* Disesuaikan untuk keterbacaan data */
+      font-size: 14.5px;
       line-height: 1.6;
+      word-break: break-word;
     }
     .bubble.user { background: var(--bubble-user); color: #ffffff; border-top-right-radius: 2px; }
     .bubble.bot { background: var(--bubble-ai); color: var(--text-main); border: 1px solid #e2e8f0; border-top-left-radius: 2px; }
 
-    /* Styling Elemen Output (Markdown) */
+    /* Markdown Styling */
     .bubble.bot p { margin-bottom: 12px; }
     .bubble.bot p:last-child { margin-bottom: 0; }
     
@@ -143,7 +141,7 @@
     }
     
     .bubble.bot pre {
-      background: #282c34; /* Warna standar Atom One Dark */
+      background: #282c34;
       padding: 16px;
       border-radius: 8px;
       overflow-x: auto;
@@ -156,11 +154,17 @@
       font-size: 13px;
     }
 
-    /* Styling Tabel Data */
+    /* Tabel Responsif */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin: 12px 0;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+    }
     .bubble.bot table {
       width: 100%;
       border-collapse: collapse;
-      margin: 12px 0;
       font-size: 13.5px;
     }
     .bubble.bot th, .bubble.bot td {
@@ -173,7 +177,27 @@
     .bubble.bot ul, .bubble.bot ol { padding-left: 20px; margin: 8px 0; }
     .bubble.bot li { margin-bottom: 4px; }
 
-    /* ====== INPUT AREA ====== */
+    /* Animasi Loading AI */
+    .typing-indicator {
+      display: flex;
+      gap: 5px;
+      padding: 8px 10px;
+      align-items: center;
+    }
+    .typing-indicator span {
+      width: 8px; height: 8px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      animation: bounce 1.3s infinite ease-in-out;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* Input Area */
     .input-area {
       padding: 18px 24px;
       background: #f8fafc;
@@ -215,7 +239,6 @@
     
     #clear-btn { background: #ffffff; border: 1px solid #cbd5e1; color: var(--text-muted); padding: 12px; }
     #clear-btn:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
-
   </style>
 </head>
 <body>
@@ -254,18 +277,26 @@
 </div>
 
 <script>
-  // Konfigurasi Marked.js untuk menggunakan Highlight.js
+  // Konfigurasi Marked Renderer yang aman dengan highlight.js
+  const renderer = new marked.Renderer();
+  
+  // Bungkus tabel agar responsif otomatis
+  renderer.table = function(header, body) {
+    return `<div class="table-container"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
+  };
+
   marked.setOptions({
+    renderer: renderer,
     highlight: function(code, lang) {
       if (lang && hljs.getLanguage(lang)) {
         return hljs.highlight(code, { language: lang }).value;
       }
       return hljs.highlightAuto(code).value;
-    }
+    },
+    breaks: true
   });
 
-  // ====== GENERATOR UUID FALLBACK ======
-  // Mencegah error jika dibuka di jaringan lokal (file://) tanpa HTTPS
+  // Generator UUID Fallback
   function generateUUID() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return crypto.randomUUID();
@@ -284,13 +315,13 @@
   }
   document.getElementById('session-label').textContent = 'SID-' + sessionId.slice(0,6).toUpperCase();
 
-  // ====== URL WEBHOOK N8N ======
   const WEBHOOK_URL = 'https://n8.waruna-group.co.id/webhook/ai-chat-endpoint';
-
   const chatBox = document.getElementById('chat-box');
   const emptyState = document.getElementById('empty-state');
   const textarea = document.getElementById('user-input');
+  const sendBtn = document.getElementById('send-btn');
 
+  // Auto-resize textarea
   textarea.addEventListener('input', () => {
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
@@ -312,27 +343,48 @@
     if (role === 'bot') {
       bubble.innerHTML = marked.parse(content);
     } else {
-      bubble.textContent = content;
+      bubble.textContent = content; // Aman dari XSS
     }
 
     row.appendChild(avatar);
     row.appendChild(bubble);
     chatBox.appendChild(row);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    
+    // Scroll mulus otomatis ke paling bawah
+    row.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    return row;
+  }
+
+  // Tampilkan loading buble saat AI berfikir
+  function showLoadingIndicator() {
+    const row = document.createElement('div');
+    row.classList.add('msg-row', 'bot', 'loading-row');
+
+    const avatar = document.createElement('div');
+    avatar.classList.add('avatar', 'bot');
+    avatar.textContent = 'AI';
+
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble', 'bot');
+    bubble.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    chatBox.appendChild(row);
+    row.scrollIntoView({ behavior: 'smooth' });
     return row;
   }
 
   async function sendMessage() {
-    const input = document.getElementById('user-input');
-    const btn = document.getElementById('send-btn');
-    const text = input.value.trim();
-    if (!text) return;
+    const text = textarea.value.trim();
+    if (!text || sendBtn.disabled) return;
 
     appendMessage('user', text);
-    input.value = '';
-    input.style.height = 'auto';
-    btn.disabled = true;
-    btn.innerHTML = 'Memproses...';
+    textarea.value = '';
+    textarea.style.height = 'auto';
+    
+    sendBtn.disabled = true;
+    const loadingBubble = showLoadingIndicator();
 
     try {
       const res = await fetch(WEBHOOK_URL, {
@@ -344,16 +396,19 @@
       if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
       const data = await res.json();
 
+      // Hapus loading bubble sebelum menampilkan jawaban
+      loadingBubble.remove();
+
       const reply = data?.output || data?.text || data?.response || JSON.stringify(data);
       appendMessage('bot', reply);
 
     } catch (err) {
-      appendMessage('bot', `**Terjadi Kesalahan Koneksi:**\n\`${err.message}\``);
+      loadingBubble.remove();
+      appendMessage('bot', `⚠️ **Kesalahan Koneksi:**\n\`${err.message}\``);
     }
 
-    btn.disabled = false;
-    btn.innerHTML = 'KIRIM <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
-    input.focus();
+    sendBtn.disabled = false;
+    textarea.focus();
   }
 
   function clearChat() {
