@@ -1,99 +1,93 @@
-html_template = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Chat Assistant</title>
+  <title>AI Workspace Terminal</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
   <style>
     :root {
       --primary: #4e2b5c;
       --primary-hover: #3b1e47;
-      --bg-body-start: #fffdf2;
-      --bg-body-end: #ffe9d6;
+      --bg-body: #f1f5f9;
       --bg-card: #ffffff;
-      --border-color: #e8dee8;
+      --border-color: #cbd5e1;
       --text-main: #1e293b;
       --text-muted: #64748b;
-      --text-secondary: #475569;
+      --bubble-ai: #f8fafc;
+      --bubble-user: #4e2b5c;
       --accent-blue: #0284c7;
-      --accent-blue-bg: #e0f2fe;
-      --green: #16a34a;
-      --green-bg: #f0fdf4;
-      --red: #ef4444;
-      --red-bg: #fef2f2;
-      --highlight-bg: #f8fafc;
-      --highlight-border: #e2e8f0;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, var(--bg-body-start) 0%, var(--bg-body-end) 100%);
+      background: var(--bg-body);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 30px 20px;
     }
 
     /* ====== WRAPPER UTAMA ====== */
     .chat-wrapper {
       width: 100%;
-      max-width: 800px;
+      max-width: 950px; /* Diperlebar untuk tabel dan kode */
       background: var(--bg-card);
-      border-radius: 16px;
-      box-shadow: 0 12px 40px rgba(78, 43, 92, 0.10);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
-      height: 85vh;
+      height: 90vh;
       overflow: hidden;
     }
 
     /* ====== HEADER ====== */
     .chat-header {
       background: var(--primary);
-      padding: 18px 24px;
+      padding: 16px 24px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
     }
     .chat-header .icon {
-      width: 36px; height: 36px;
-      background: rgba(255,255,255,0.15);
+      width: 34px; height: 34px;
+      background: rgba(255,255,255,0.1);
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
     }
-    .chat-header .icon svg { color: white; }
     .chat-header h1 {
       font-family: 'Poppins', sans-serif;
       font-size: 16px;
-      font-weight: 700;
       color: #ffffff;
       margin: 0;
     }
     .chat-header p {
       font-size: 11px;
-      color: rgba(255,255,255,0.65);
+      color: #cbd5e1;
       margin: 0;
-      font-weight: 400;
     }
     .session-badge {
       margin-left: auto;
-      background: rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.8);
+      background: rgba(0,0,0,0.2);
+      color: #e2e8f0;
       padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
     }
 
     /* ====== CHAT BOX ====== */
@@ -103,272 +97,203 @@ html_template = '''<!DOCTYPE html>
       padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      background: linear-gradient(to bottom, #fefdfb, #fdf9f4);
+      gap: 20px;
+      background: #ffffff;
     }
-    #chat-box::-webkit-scrollbar { width: 4px; }
-    #chat-box::-webkit-scrollbar-track { background: transparent; }
-    #chat-box::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+    
+    /* Scrollbar */
+    #chat-box::-webkit-scrollbar { width: 6px; }
+    #chat-box::-webkit-scrollbar-track { background: #f1f5f9; }
+    #chat-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
     /* ====== MESSAGES ====== */
-    .msg-row {
-      display: flex;
-      gap: 10px;
-      align-items: flex-end;
-    }
+    .msg-row { display: flex; gap: 12px; align-items: flex-start; }
     .msg-row.user { flex-direction: row-reverse; }
 
     .avatar {
-      width: 30px; height: 30px;
-      border-radius: 50%;
+      width: 32px; height: 32px;
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700;
-      flex-shrink: 0;
+      font-size: 12px; font-weight: 700; flex-shrink: 0; font-family: 'Poppins', sans-serif;
     }
-    .avatar.bot { background: var(--primary); color: white; }
+    .avatar.bot { background: #e2e8f0; color: var(--primary); }
     .avatar.user { background: var(--accent-blue); color: white; }
 
     .bubble {
-      max-width: 72%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 13.5px;
-      line-height: 1.65;
-      position: relative;
+      max-width: 80%;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 14.5px; /* Disesuaikan untuk keterbacaan data */
+      line-height: 1.6;
     }
-    .bubble.user {
-      background: var(--primary);
-      color: #ffffff;
-      border-bottom-right-radius: 3px;
-    }
-    .bubble.bot {
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--highlight-border);
-      border-bottom-left-radius: 3px;
-      box-shadow: 0 2px 8px rgba(78, 43, 92, 0.05);
-    }
+    .bubble.user { background: var(--bubble-user); color: #ffffff; border-top-right-radius: 2px; }
+    .bubble.bot { background: var(--bubble-ai); color: var(--text-main); border: 1px solid #e2e8f0; border-top-left-radius: 2px; }
 
-    /* Markdown dalam bot bubble */
-    .bubble.bot p { margin-bottom: 8px; }
+    /* Styling Elemen Output (Markdown) */
+    .bubble.bot p { margin-bottom: 12px; }
     .bubble.bot p:last-child { margin-bottom: 0; }
-    .bubble.bot strong { color: var(--primary); }
+    
     .bubble.bot code {
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
-      background: var(--highlight-bg);
-      border: 1px solid var(--highlight-border);
-      padding: 1px 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      background: #e2e8f0;
+      color: #b91c1c;
+      padding: 2px 6px;
       border-radius: 4px;
-      color: var(--accent-blue);
     }
+    
     .bubble.bot pre {
-      background: #1e293b;
-      color: #e2e8f0;
-      padding: 14px;
+      background: #282c34; /* Warna standar Atom One Dark */
+      padding: 16px;
       border-radius: 8px;
       overflow-x: auto;
-      margin: 8px 0;
-      font-size: 12px;
-      line-height: 1.6;
+      margin: 12px 0;
     }
     .bubble.bot pre code {
       background: transparent;
-      border: none;
-      padding: 0;
       color: inherit;
-      font-size: 12px;
-    }
-    .bubble.bot ul, .bubble.bot ol {
-      padding-left: 18px;
-      margin: 6px 0;
-    }
-    .bubble.bot li { margin-bottom: 4px; }
-
-    /* Typing indicator */
-    .typing-indicator {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      padding: 14px 16px;
-    }
-    .typing-indicator span {
-      width: 7px; height: 7px;
-      background: var(--border-color);
-      border-radius: 50%;
-      animation: bounce 1.2s infinite;
-    }
-    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes bounce {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-6px); background: var(--primary); }
+      padding: 0;
+      font-size: 13px;
     }
 
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-      border: 2px dashed var(--highlight-border);
-      border-radius: 12px;
-      margin: auto;
+    /* Styling Tabel Data */
+    .bubble.bot table {
       width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 13.5px;
     }
-    .empty-state .icon-big {
-      font-size: 36px;
-      margin-bottom: 12px;
-      opacity: 0.5;
+    .bubble.bot th, .bubble.bot td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 12px;
+      text-align: left;
     }
-    .empty-state h3 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      color: #94a3b8;
-      margin-bottom: 6px;
-    }
-    .empty-state p {
-      font-size: 12px;
-      color: #94a3b8;
-    }
+    .bubble.bot th { background: #e2e8f0; font-weight: 600; }
+
+    .bubble.bot ul, .bubble.bot ol { padding-left: 20px; margin: 8px 0; }
+    .bubble.bot li { margin-bottom: 4px; }
 
     /* ====== INPUT AREA ====== */
     .input-area {
-      padding: 16px 24px;
-      background: var(--bg-card);
+      padding: 18px 24px;
+      background: #f8fafc;
       border-top: 1px solid var(--border-color);
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: flex-end;
     }
     #user-input {
       flex: 1;
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: 8px;
-      border: 1px solid var(--highlight-border);
-      background: var(--highlight-bg);
+      border: 1px solid var(--border-color);
+      background: #ffffff;
       color: var(--text-main);
-      font-size: 13px;
+      font-size: 14.5px;
       font-family: 'Inter', sans-serif;
       resize: none;
-      max-height: 120px;
+      max-height: 150px;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
       line-height: 1.5;
     }
-    #user-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(78, 43, 92, 0.12);
-      background: #ffffff;
-    }
-    #user-input::placeholder { color: #94a3b8; }
+    #user-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(78, 43, 92, 0.1); }
 
-    #send-btn {
-      padding: 10px 18px;
-      background: var(--primary);
-      color: white;
-      border: none;
+    .btn-action {
+      padding: 12px 20px;
       border-radius: 8px;
       cursor: pointer;
       font-family: 'Poppins', sans-serif;
       font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      display: flex; align-items: center; gap: 6px;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-      box-shadow: 0 4px 6px -1px rgba(78, 43, 92, 0.2);
-      white-space: nowrap;
-      flex-shrink: 0;
+      font-weight: 600;
+      border: none;
+      display: flex; align-items: center; gap: 8px;
+      transition: 0.2s;
     }
-    #send-btn:hover { background: var(--primary-hover); box-shadow: 0 6px 12px rgba(78,43,92,0.25); }
-    #send-btn:active { transform: translateY(1px); }
-    #send-btn:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
+    #send-btn { background: var(--primary); color: white; flex-shrink: 0; }
+    #send-btn:hover { background: var(--primary-hover); }
+    #send-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    
+    #clear-btn { background: #ffffff; border: 1px solid #cbd5e1; color: var(--text-muted); padding: 12px; }
+    #clear-btn:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
 
-    #clear-btn {
-      padding: 10px 12px;
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--highlight-border);
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 12px;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.2s;
-      flex-shrink: 0;
-      title: "Clear chat";
-    }
-    #clear-btn:hover { background: var(--red-bg); color: var(--red); border-color: #fecaca; }
-
-    /* ====== ANIMASI FADE IN ====== */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .msg-row { animation: fadeIn 0.25s ease; }
   </style>
 </head>
 <body>
 
 <div class="chat-wrapper">
-
-  <!-- HEADER -->
   <div class="chat-header">
     <div class="icon">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2a10 10 0 1 0 10 10H12V2z"/>
-        <path d="M21.17 8H12V2.83"/>
+        <path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M21.17 8H12V2.83"/>
       </svg>
     </div>
     <div>
-      <h1>AI Assistant</h1>
-      <p>Powered by Gemini — N8N Workflow</p>
+      <h1>Workspace Intelligence</h1>
+      <p>Data & Automation Assistant</p>
     </div>
-    <span class="session-badge" id="session-label">Session Aktif</span>
+    <span class="session-badge" id="session-label">SID-XXXX</span>
   </div>
 
-  <!-- CHAT BOX -->
   <div id="chat-box">
-    <div class="empty-state" id="empty-state">
-      <div class="icon-big">💬</div>
-      <h3>Mulai Percakapan</h3>
-      <p>Ketik pertanyaan atau instruksi kamu di bawah ini.</p>
+    <div style="text-align:center; padding: 40px; color: #94a3b8;" id="empty-state">
+      <h3 style="font-family:'Poppins'; color:#64748b; margin-bottom:8px;">Terminal Siap</h3>
+      <p style="font-size:13px;">Kirim instruksi analitik, script, atau konfigurasi n8n.</p>
     </div>
   </div>
 
-  <!-- INPUT -->
   <div class="input-area">
-    <textarea id="user-input" rows="1" placeholder="Ketik pesan... (Enter kirim, Shift+Enter baris baru)"></textarea>
-    <button id="clear-btn" title="Clear chat" onclick="clearChat()">🗑</button>
-    <button id="send-btn" onclick="sendMessage()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
-      </svg>
+    <textarea id="user-input" rows="1" placeholder="Masukkan instruksi... (Shift+Enter untuk baris baru)"></textarea>
+    <button id="clear-btn" title="Reset Session" onclick="clearChat()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+    </button>
+    <button id="send-btn" class="btn-action" onclick="sendMessage()">
       KIRIM
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
     </button>
   </div>
-
 </div>
 
 <script>
-  // ====== SESSION ID — persist di localStorage ======
+  // Konfigurasi Marked.js untuk menggunakan Highlight.js
+  marked.setOptions({
+    highlight: function(code, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        return hljs.highlight(code, { language: lang }).value;
+      }
+      return hljs.highlightAuto(code).value;
+    }
+  });
+
+  // ====== GENERATOR UUID FALLBACK ======
+  // Mencegah error jika dibuka di jaringan lokal (file://) tanpa HTTPS
+  function generateUUID() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
   let sessionId = localStorage.getItem('ai_chat_session_id');
   if (!sessionId) {
-    sessionId = crypto.randomUUID();
+    sessionId = generateUUID();
     localStorage.setItem('ai_chat_session_id', sessionId);
   }
-  document.getElementById('session-label').textContent = 'ID: ' + sessionId.slice(0,8).toUpperCase();
+  document.getElementById('session-label').textContent = 'SID-' + sessionId.slice(0,6).toUpperCase();
 
-  // ====== GANTI URL WEBHOOK N8N KAMU DI SINI ======
+  // ====== URL WEBHOOK N8N ======
   const WEBHOOK_URL = 'https://n8.waruna-group.co.id/webhook/ai-chat-endpoint';
 
   const chatBox = document.getElementById('chat-box');
   const emptyState = document.getElementById('empty-state');
-
-  // Auto-resize textarea
   const textarea = document.getElementById('user-input');
+
   textarea.addEventListener('input', () => {
     textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
   });
 
   function appendMessage(role, content) {
@@ -394,27 +319,6 @@ html_template = '''<!DOCTYPE html>
     row.appendChild(bubble);
     chatBox.appendChild(row);
     chatBox.scrollTop = chatBox.scrollHeight;
-    return { row, bubble };
-  }
-
-  function appendTyping() {
-    if (emptyState) emptyState.style.display = 'none';
-    const row = document.createElement('div');
-    row.classList.add('msg-row', 'bot');
-    row.id = 'typing-row';
-
-    const avatar = document.createElement('div');
-    avatar.classList.add('avatar', 'bot');
-    avatar.textContent = 'AI';
-
-    const bubble = document.createElement('div');
-    bubble.classList.add('bubble', 'bot');
-    bubble.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
-
-    row.appendChild(avatar);
-    row.appendChild(bubble);
-    chatBox.appendChild(row);
-    chatBox.scrollTop = chatBox.scrollHeight;
     return row;
   }
 
@@ -428,8 +332,7 @@ html_template = '''<!DOCTYPE html>
     input.value = '';
     input.style.height = 'auto';
     btn.disabled = true;
-
-    const typingRow = appendTyping();
+    btn.innerHTML = 'Memproses...';
 
     try {
       const res = await fetch(WEBHOOK_URL, {
@@ -438,38 +341,31 @@ html_template = '''<!DOCTYPE html>
         body: JSON.stringify({ chatInput: text, sessionId: sessionId })
       });
 
-      typingRow.remove();
-
-      if (!res.ok) throw new Error('Server error: ' + res.status);
+      if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
       const data = await res.json();
 
-      // Sesuaikan key output dari node AI Agent
-      const reply = data?.output || data?.text || data?.response || data?.message || JSON.stringify(data);
+      const reply = data?.output || data?.text || data?.response || JSON.stringify(data);
       appendMessage('bot', reply);
 
     } catch (err) {
-      typingRow.remove();
-      appendMessage('bot', '❌ **Gagal terhubung ke server.**\\n\\n`' + err.message + '`');
+      appendMessage('bot', `**Terjadi Kesalahan Koneksi:**\n\`${err.message}\``);
     }
 
     btn.disabled = false;
+    btn.innerHTML = 'KIRIM <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
     input.focus();
   }
 
   function clearChat() {
     chatBox.innerHTML = '';
-    const empty = document.createElement('div');
-    empty.className = 'empty-state';
-    empty.id = 'empty-state';
-    empty.innerHTML = '<div class="icon-big">💬</div><h3>Mulai Percakapan</h3><p>Ketik pertanyaan atau instruksi kamu di bawah ini.</p>';
-    chatBox.appendChild(empty);
-    // Generate session baru
-    sessionId = crypto.randomUUID();
+    chatBox.appendChild(emptyState);
+    emptyState.style.display = 'block';
+    
+    sessionId = generateUUID();
     localStorage.setItem('ai_chat_session_id', sessionId);
-    document.getElementById('session-label').textContent = 'ID: ' + sessionId.slice(0,8).toUpperCase();
+    document.getElementById('session-label').textContent = 'SID-' + sessionId.slice(0,6).toUpperCase();
   }
 
-  // Enter kirim, Shift+Enter baris baru
   textarea.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -479,11 +375,4 @@ html_template = '''<!DOCTYPE html>
 </script>
 
 </body>
-</html>'''
-
-import os
-os.makedirs('/root/output', exist_ok=True)
-with open('/root/output/ai-chat-interface.html', 'w', encoding='utf-8') as f:
-    f.write(html_template)
-
-print("File saved:", len(html_template), "characters")
+</html>
