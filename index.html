@@ -129,7 +129,7 @@
     .sidebar-header h2 {
       font-family: 'Poppins', sans-serif;
       font-size: 15px;
-      color: #9b68ad; /* Adjusted for better visibility in both modes if needed, or keep primary */
+      color: #9b68ad;
     }
     [data-theme="light"] .sidebar-header h2 { color: var(--primary); }
     [data-theme="dark"] .sidebar-header h2 { color: #d8b4e2; }
@@ -185,7 +185,6 @@
     .status-active { background: #dcfce7; color: #15803d; }
     .status-planning { background: #fef9c3; color: #a16207; }
 
-    /* Dark Mode overrides for status badges */
     [data-theme="dark"] .status-active { background: rgba(21, 128, 61, 0.2); color: #4ade80; }
     [data-theme="dark"] .status-planning { background: rgba(161, 98, 7, 0.2); color: #facc15; }
 
@@ -288,7 +287,6 @@
       flex-shrink: 0;
     }
 
-    /* Theme Toggle Button in Header */
     .btn-theme-toggle {
       background: transparent;
       border: 1px solid rgba(255,255,255,0.2);
@@ -368,6 +366,7 @@
       font-size: 14px;
       line-height: 1.65;
       word-break: break-word;
+      width: 100%;
     }
     .bubble.user {
       background: var(--bubble-user);
@@ -698,8 +697,6 @@
 </div>
 
 <script>
-  // KOREKSI FUNDAMENTAL: Kita tidak lagi memaksakan custom renderer yang rentan rusak.
-  // Marked.js akan berjalan secara standar, lalu kita bungkus kode dengan DOM Manipulation.
   marked.setOptions({ breaks: true, gfm: true });
 
   /* === THEME TOGGLE LOGIC === */
@@ -720,10 +717,36 @@
     applyTheme(newTheme);
   }
 
-  // Initialize theme on load
   const savedTheme = localStorage.getItem('ai_workspace_theme') || 'light';
   applyTheme(savedTheme);
 
+  /* === DOWNLOAD HTML LOGIC === */
+  function downloadHTMLCode(button) {
+    const textarea = button.parentElement.querySelector('.hidden-raw-code');
+    if (!textarea) return;
+
+    const code = textarea.value;
+    const blob = new Blob([code], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Presentasi_${formatTime().replace(':', '')}_${generateUUID().slice(0,4)}.html`;
+    
+    document.body.appendChild(a);
+    a.click();
+    
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    const originalText = button.innerHTML;
+    button.innerHTML = '✓ Berhasil Diunduh';
+    button.style.backgroundColor = '#10b981';
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.style.backgroundColor = 'var(--primary)';
+    }, 2500);
+  }
 
   function copyToClipboard(button) {
     const code = button.closest('.code-container').querySelector('pre code').textContent;
@@ -887,10 +910,8 @@
       let safeContent = content;
       if (typeof safeContent !== 'string') safeContent = JSON.stringify(safeContent, null, 2);
       
-      // Render standard markdown
       bubble.innerHTML = marked.parse(safeContent);
       
-      // Post-Processing Anti-Crash untuk Format Kode & Tabel
       bubble.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
         
@@ -904,17 +925,45 @@
             const wrapper = document.createElement('div');
             wrapper.className = 'code-container code-wrapper';
             
-            const header = document.createElement('div');
-            header.className = 'code-header';
-            header.innerHTML = `<span>${lang}</span><button class="btn-copy-code" onclick="copyToClipboard(this)">Salin Kode</button>`;
+            const rawCode = block.textContent;
             
-            pre.parentNode.insertBefore(wrapper, pre);
-            wrapper.appendChild(header);
-            wrapper.appendChild(pre);
+            const isFullDocument = (lang === 'HTML' || lang === 'XML' || lang === 'CODE') && 
+                                   (rawCode.toLowerCase().includes('<!doctype html>') || rawCode.toLowerCase().includes('<html'));
+
+            if (isFullDocument) {
+                const header = document.createElement('div');
+                header.className = 'code-header';
+                header.innerHTML = `<span>🌐 Web Document Generated</span>`;
+                
+                const fileUI = document.createElement('div');
+                fileUI.style.cssText = 'padding: 24px; text-align: center; background: var(--bg-body); border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-top: 1px solid var(--border-color);';
+                fileUI.innerHTML = `
+                    <div style="font-size: 32px; margin-bottom: 12px;">📄</div>
+                    <div style="font-weight: 600; color: var(--text-main); font-size: 14px; margin-bottom: 6px;">File Presentasi Siap</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px;">Kode sumber disembunyikan. Silakan unduh untuk melihat hasilnya.</div>
+                    <button onclick="downloadHTMLCode(this)" style="background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 12px; transition: background 0.2s;">
+                        ⬇️ Download .html
+                    </button>
+                    <textarea class="hidden-raw-code" style="display: none;">${rawCode}</textarea>
+                `;
+                
+                pre.style.display = 'none'; 
+                pre.parentNode.insertBefore(wrapper, pre);
+                wrapper.appendChild(header);
+                wrapper.appendChild(fileUI);
+                wrapper.appendChild(pre); 
+            } else {
+                const header = document.createElement('div');
+                header.className = 'code-header';
+                header.innerHTML = `<span>${lang}</span><button class="btn-copy-code" onclick="copyToClipboard(this)">Salin Kode</button>`;
+                
+                pre.parentNode.insertBefore(wrapper, pre);
+                wrapper.appendChild(header);
+                wrapper.appendChild(pre);
+            }
         }
       });
       
-      // Post-processing agar tabel bisa di-scroll horizontal tanpa merusak tata letak
       bubble.querySelectorAll('table').forEach((table) => {
          if(!table.parentElement.classList.contains('table-wrapper')) {
              const wrapper = document.createElement('div');
@@ -1026,7 +1075,6 @@
       if (!res.ok) throw new Error(`Server membalas dengan status HTTP ${res.status}`);
       const rawData = await res.json();
       
-      // KOREKSI ARRAY: Mengekstrak output jika n8n membalas dalam kurung siku/Array
       const data = Array.isArray(rawData) ? rawData[0] : rawData;
       
       loadingBubble.remove();
