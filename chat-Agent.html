@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat & Code Workspace</title>
+    <!-- Library untuk memproses Markdown dari AI -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --panel-bg: #ffffff;
+            --border: #e2e8f0;
+            --primary: #0f172a;
+            --user-msg: #eff6ff;
+            --ai-msg: #f1f5f9;
+        }
+        body { margin: 0; padding: 20px; font-family: 'Inter', sans-serif; background: var(--bg-main); height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
+        
+        .workspace { display: flex; gap: 20px; flex-grow: 1; overflow: hidden; }
+        
+        /* PANEL KIRI: Interaksi Chat */
+        .chat-panel { width: 400px; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; }
+        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border); font-weight: 600; background: var(--primary); color: white; }
+        .chat-history { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { padding: 12px 16px; border-radius: 8px; font-size: 14px; max-width: 85%; line-height: 1.5; }
+        .msg-user { background: var(--user-msg); align-self: flex-end; border-bottom-right-radius: 2px; }
+        .msg-ai { background: var(--ai-msg); align-self: flex-start; border-bottom-left-radius: 2px; }
+        
+        .chat-input-area { padding: 15px; border-top: 1px solid var(--border); background: #f8fafc; }
+        textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; resize: none; box-sizing: border-box; outline: none; }
+        textarea:focus { border-color: #3b82f6; }
+        button { margin-top: 10px; width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        button:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        /* PANEL KANAN: Hasil Code / Analisis Data */
+        .result-panel { flex-grow: 1; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; }
+        .result-header { padding: 15px 20px; border-bottom: 1px solid var(--border); font-weight: 600; background: #f1f5f9; color: var(--primary); }
+        .result-content { padding: 25px; overflow-y: auto; flex-grow: 1; font-size: 14px; line-height: 1.6; color: #334155; }
+        
+        /* Styling untuk elemen Code (Markdown) */
+        pre { background: #1e293b; color: #f8fafc; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 13px; }
+        code { font-family: monospace; }
+        
+        .loader { display: none; font-size: 13px; color: #64748b; text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="workspace">
+        <!-- Panel Kiri -->
+        <div class="chat-panel">
+            <div class="chat-header">Terminal Obrolan AI</div>
+            <div class="chat-history" id="chatHistory">
+                <div class="message msg-ai">Halo, saya siap membantu penulisan kode atau pengolahan data. Apa yang ingin kamu buat hari ini?</div>
+            </div>
+            <div class="chat-input-area">
+                <textarea id="promptInput" rows="3" placeholder="Ketik instruksi di sini..."></textarea>
+                <button id="sendBtn">Kirim Instruksi</button>
+                <div class="loader" id="loadingState">Sedang memproses...</div>
+            </div>
+        </div>
+
+        <!-- Panel Kanan -->
+        <div class="result-panel">
+            <div class="result-header">Workspace Output (Kode & Data)</div>
+            <div class="result-content" id="resultDisplay">
+                <p style="color: #94a3b8; text-align: center; margin-top: 100px;">Output dari AI akan ditampilkan di panel ini menggunakan format yang rapi.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ganti URL ini dengan URL Webhook POST n8n milikmu
+        const N8N_WEBHOOK_URL = "https://n8.waruna-group.co.id/webhook/ai-chat-endpoint"; 
+        
+        // Membuat Session ID statis per tab browser agar AI mengingat konteks
+        const sessionId = "session-" + Math.random().toString(36).substr(2, 9);
+
+        const sendBtn = document.getElementById('sendBtn');
+        const promptInput = document.getElementById('promptInput');
+        const chatHistory = document.getElementById('chatHistory');
+        const resultDisplay = document.getElementById('resultDisplay');
+        const loadingState = document.getElementById('loadingState');
+
+        function appendMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender === 'user' ? 'msg-user' : 'msg-ai'}`;
+            msgDiv.textContent = text;
+            chatHistory.appendChild(msgDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight; // Auto scroll ke bawah
+        }
+
+        sendBtn.addEventListener('click', async () => {
+            const text = promptInput.value.trim();
+            if (!text) return;
+
+            // Update UI: Tampilkan input user, matikan tombol, munculkan loading
+            appendMessage(text, 'user');
+            promptInput.value = '';
+            sendBtn.disabled = true;
+            loadingState.style.display = 'block';
+
+            try {
+                // Eksekusi pemanggilan ke Backend n8n
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        chatInput: text
+                    })
+                });
+
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+                const data = await response.json();
+                
+                // Asumsi node n8n merespons dengan format { output: "jawaban markdown AI" }
+                const aiResponse = data.output || "Tidak ada respons dari AI.";
+
+                // Tampilkan respons singkat di kiri, render struktur lengkap (Kode) di kanan
+                appendMessage("Selesai diproses. Cek panel kanan untuk detailnya.", 'ai');
+                
+                // Konversi Markdown dari LLM menjadi HTML yang aman
+                resultDisplay.innerHTML = marked.parse(aiResponse);
+
+            } catch (error) {
+                appendMessage("Terjadi kesalahan sistem: " + error.message, 'ai');
+            } finally {
+                // Kembalikan UI ke state awal
+                sendBtn.disabled = false;
+                loadingState.style.display = 'none';
+                promptInput.focus();
+            }
+        });
+
+        // Fitur tekan Enter untuk mengirim (tanpa shift)
+        promptInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendBtn.click();
+            }
+        });
+    </script>
+
+</body>
+</html>
