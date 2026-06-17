@@ -1,150 +1,489 @@
-<!DOCTYPE html>
+html_template = '''<!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat & Code Workspace</title>
-    <!-- Library untuk memproses Markdown dari AI -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-        :root {
-            --bg-main: #f8fafc;
-            --panel-bg: #ffffff;
-            --border: #e2e8f0;
-            --primary: #0f172a;
-            --user-msg: #eff6ff;
-            --ai-msg: #f1f5f9;
-        }
-        body { margin: 0; padding: 20px; font-family: 'Inter', sans-serif; background: var(--bg-main); height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
-        
-        .workspace { display: flex; gap: 20px; flex-grow: 1; overflow: hidden; }
-        
-        /* PANEL KIRI: Interaksi Chat */
-        .chat-panel { width: 400px; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; }
-        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border); font-weight: 600; background: var(--primary); color: white; }
-        .chat-history { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .message { padding: 12px 16px; border-radius: 8px; font-size: 14px; max-width: 85%; line-height: 1.5; }
-        .msg-user { background: var(--user-msg); align-self: flex-end; border-bottom-right-radius: 2px; }
-        .msg-ai { background: var(--ai-msg); align-self: flex-start; border-bottom-left-radius: 2px; }
-        
-        .chat-input-area { padding: 15px; border-top: 1px solid var(--border); background: #f8fafc; }
-        textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; resize: none; box-sizing: border-box; outline: none; }
-        textarea:focus { border-color: #3b82f6; }
-        button { margin-top: 10px; width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        button:disabled { background: #94a3b8; cursor: not-allowed; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Chat Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --primary: #4e2b5c;
+      --primary-hover: #3b1e47;
+      --bg-body-start: #fffdf2;
+      --bg-body-end: #ffe9d6;
+      --bg-card: #ffffff;
+      --border-color: #e8dee8;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-secondary: #475569;
+      --accent-blue: #0284c7;
+      --accent-blue-bg: #e0f2fe;
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --red: #ef4444;
+      --red-bg: #fef2f2;
+      --highlight-bg: #f8fafc;
+      --highlight-border: #e2e8f0;
+    }
 
-        /* PANEL KANAN: Hasil Code / Analisis Data */
-        .result-panel { flex-grow: 1; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; }
-        .result-header { padding: 15px 20px; border-bottom: 1px solid var(--border); font-weight: 600; background: #f1f5f9; color: var(--primary); }
-        .result-content { padding: 25px; overflow-y: auto; flex-grow: 1; font-size: 14px; line-height: 1.6; color: #334155; }
-        
-        /* Styling untuk elemen Code (Markdown) */
-        pre { background: #1e293b; color: #f8fafc; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 13px; }
-        code { font-family: monospace; }
-        
-        .loader { display: none; font-size: 13px; color: #64748b; text-align: center; margin-top: 10px; }
-    </style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--bg-body-start) 0%, var(--bg-body-end) 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* ====== WRAPPER UTAMA ====== */
+    .chat-wrapper {
+      width: 100%;
+      max-width: 800px;
+      background: var(--bg-card);
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(78, 43, 92, 0.10);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      height: 85vh;
+      overflow: hidden;
+    }
+
+    /* ====== HEADER ====== */
+    .chat-header {
+      background: var(--primary);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-header .icon {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .chat-header .icon svg { color: white; }
+    .chat-header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+    }
+    .chat-header p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin: 0;
+      font-weight: 400;
+    }
+    .session-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.8);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ====== CHAT BOX ====== */
+    #chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: linear-gradient(to bottom, #fefdfb, #fdf9f4);
+    }
+    #chat-box::-webkit-scrollbar { width: 4px; }
+    #chat-box::-webkit-scrollbar-track { background: transparent; }
+    #chat-box::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+    /* ====== MESSAGES ====== */
+    .msg-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .msg-row.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .avatar.bot { background: var(--primary); color: white; }
+    .avatar.user { background: var(--accent-blue); color: white; }
+
+    .bubble {
+      max-width: 72%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      line-height: 1.65;
+      position: relative;
+    }
+    .bubble.user {
+      background: var(--primary);
+      color: #ffffff;
+      border-bottom-right-radius: 3px;
+    }
+    .bubble.bot {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--highlight-border);
+      border-bottom-left-radius: 3px;
+      box-shadow: 0 2px 8px rgba(78, 43, 92, 0.05);
+    }
+
+    /* Markdown dalam bot bubble */
+    .bubble.bot p { margin-bottom: 8px; }
+    .bubble.bot p:last-child { margin-bottom: 0; }
+    .bubble.bot strong { color: var(--primary); }
+    .bubble.bot code {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      background: var(--highlight-bg);
+      border: 1px solid var(--highlight-border);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--accent-blue);
+    }
+    .bubble.bot pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 8px 0;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .bubble.bot pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+      font-size: 12px;
+    }
+    .bubble.bot ul, .bubble.bot ol {
+      padding-left: 18px;
+      margin: 6px 0;
+    }
+    .bubble.bot li { margin-bottom: 4px; }
+
+    /* Typing indicator */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: 14px 16px;
+    }
+    .typing-indicator span {
+      width: 7px; height: 7px;
+      background: var(--border-color);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); background: var(--primary); }
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      border: 2px dashed var(--highlight-border);
+      border-radius: 12px;
+      margin: auto;
+      width: 100%;
+    }
+    .empty-state .icon-big {
+      font-size: 36px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    .empty-state h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+    .empty-state p {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* ====== INPUT AREA ====== */
+    .input-area {
+      padding: 16px 24px;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    #user-input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--highlight-border);
+      background: var(--highlight-bg);
+      color: var(--text-main);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      resize: none;
+      max-height: 120px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      line-height: 1.5;
+    }
+    #user-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(78, 43, 92, 0.12);
+      background: #ffffff;
+    }
+    #user-input::placeholder { color: #94a3b8; }
+
+    #send-btn {
+      padding: 10px 18px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      display: flex; align-items: center; gap: 6px;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 6px -1px rgba(78, 43, 92, 0.2);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    #send-btn:hover { background: var(--primary-hover); box-shadow: 0 6px 12px rgba(78,43,92,0.25); }
+    #send-btn:active { transform: translateY(1px); }
+    #send-btn:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
+
+    #clear-btn {
+      padding: 10px 12px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--highlight-border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      title: "Clear chat";
+    }
+    #clear-btn:hover { background: var(--red-bg); color: var(--red); border-color: #fecaca; }
+
+    /* ====== ANIMASI FADE IN ====== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .msg-row { animation: fadeIn 0.25s ease; }
+  </style>
 </head>
 <body>
 
-    <div class="workspace">
-        <!-- Panel Kiri -->
-        <div class="chat-panel">
-            <div class="chat-header">Terminal Obrolan AI</div>
-            <div class="chat-history" id="chatHistory">
-                <div class="message msg-ai">Halo, saya siap membantu penulisan kode atau pengolahan data. Apa yang ingin kamu buat hari ini?</div>
-            </div>
-            <div class="chat-input-area">
-                <textarea id="promptInput" rows="3" placeholder="Ketik instruksi di sini..."></textarea>
-                <button id="sendBtn">Kirim Instruksi</button>
-                <div class="loader" id="loadingState">Sedang memproses...</div>
-            </div>
-        </div>
+<div class="chat-wrapper">
 
-        <!-- Panel Kanan -->
-        <div class="result-panel">
-            <div class="result-header">Workspace Output (Kode & Data)</div>
-            <div class="result-content" id="resultDisplay">
-                <p style="color: #94a3b8; text-align: center; margin-top: 100px;">Output dari AI akan ditampilkan di panel ini menggunakan format yang rapi.</p>
-            </div>
-        </div>
+  <!-- HEADER -->
+  <div class="chat-header">
+    <div class="icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10H12V2z"/>
+        <path d="M21.17 8H12V2.83"/>
+      </svg>
     </div>
+    <div>
+      <h1>AI Assistant</h1>
+      <p>Powered by Gemini — N8N Workflow</p>
+    </div>
+    <span class="session-badge" id="session-label">Session Aktif</span>
+  </div>
 
-    <script>
-        // Ganti URL ini dengan URL Webhook POST n8n milikmu
-        const N8N_WEBHOOK_URL = "https://n8.waruna-group.co.id/webhook/ai-chat-endpoint"; 
-        
-        // Membuat Session ID statis per tab browser agar AI mengingat konteks
-        const sessionId = "session-" + Math.random().toString(36).substr(2, 9);
+  <!-- CHAT BOX -->
+  <div id="chat-box">
+    <div class="empty-state" id="empty-state">
+      <div class="icon-big">💬</div>
+      <h3>Mulai Percakapan</h3>
+      <p>Ketik pertanyaan atau instruksi kamu di bawah ini.</p>
+    </div>
+  </div>
 
-        const sendBtn = document.getElementById('sendBtn');
-        const promptInput = document.getElementById('promptInput');
-        const chatHistory = document.getElementById('chatHistory');
-        const resultDisplay = document.getElementById('resultDisplay');
-        const loadingState = document.getElementById('loadingState');
+  <!-- INPUT -->
+  <div class="input-area">
+    <textarea id="user-input" rows="1" placeholder="Ketik pesan... (Enter kirim, Shift+Enter baris baru)"></textarea>
+    <button id="clear-btn" title="Clear chat" onclick="clearChat()">🗑</button>
+    <button id="send-btn" onclick="sendMessage()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+      </svg>
+      KIRIM
+    </button>
+  </div>
 
-        function appendMessage(text, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${sender === 'user' ? 'msg-user' : 'msg-ai'}`;
-            msgDiv.textContent = text;
-            chatHistory.appendChild(msgDiv);
-            chatHistory.scrollTop = chatHistory.scrollHeight; // Auto scroll ke bawah
-        }
+</div>
 
-        sendBtn.addEventListener('click', async () => {
-            const text = promptInput.value.trim();
-            if (!text) return;
+<script>
+  // ====== SESSION ID — persist di localStorage ======
+  let sessionId = localStorage.getItem('ai_chat_session_id');
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem('ai_chat_session_id', sessionId);
+  }
+  document.getElementById('session-label').textContent = 'ID: ' + sessionId.slice(0,8).toUpperCase();
 
-            // Update UI: Tampilkan input user, matikan tombol, munculkan loading
-            appendMessage(text, 'user');
-            promptInput.value = '';
-            sendBtn.disabled = true;
-            loadingState.style.display = 'block';
+  // ====== GANTI URL WEBHOOK N8N KAMU DI SINI ======
+  const WEBHOOK_URL = 'https://n8.waruna-group.co.id/webhook/ai-chat-endpoint';
 
-            try {
-                // Eksekusi pemanggilan ke Backend n8n
-                const response = await fetch(N8N_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        sessionId: sessionId,
-                        chatInput: text
-                    })
-                });
+  const chatBox = document.getElementById('chat-box');
+  const emptyState = document.getElementById('empty-state');
 
-                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+  // Auto-resize textarea
+  const textarea = document.getElementById('user-input');
+  textarea.addEventListener('input', () => {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+  });
 
-                const data = await response.json();
-                
-                // Asumsi node n8n merespons dengan format { output: "jawaban markdown AI" }
-                const aiResponse = data.output || "Tidak ada respons dari AI.";
+  function appendMessage(role, content) {
+    if (emptyState) emptyState.style.display = 'none';
 
-                // Tampilkan respons singkat di kiri, render struktur lengkap (Kode) di kanan
-                appendMessage("Selesai diproses. Cek panel kanan untuk detailnya.", 'ai');
-                
-                // Konversi Markdown dari LLM menjadi HTML yang aman
-                resultDisplay.innerHTML = marked.parse(aiResponse);
+    const row = document.createElement('div');
+    row.classList.add('msg-row', role);
 
-            } catch (error) {
-                appendMessage("Terjadi kesalahan sistem: " + error.message, 'ai');
-            } finally {
-                // Kembalikan UI ke state awal
-                sendBtn.disabled = false;
-                loadingState.style.display = 'none';
-                promptInput.focus();
-            }
-        });
+    const avatar = document.createElement('div');
+    avatar.classList.add('avatar', role);
+    avatar.textContent = role === 'user' ? 'PU' : 'AI';
 
-        // Fitur tekan Enter untuk mengirim (tanpa shift)
-        promptInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendBtn.click();
-            }
-        });
-    </script>
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble', role);
+
+    if (role === 'bot') {
+      bubble.innerHTML = marked.parse(content);
+    } else {
+      bubble.textContent = content;
+    }
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    chatBox.appendChild(row);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return { row, bubble };
+  }
+
+  function appendTyping() {
+    if (emptyState) emptyState.style.display = 'none';
+    const row = document.createElement('div');
+    row.classList.add('msg-row', 'bot');
+    row.id = 'typing-row';
+
+    const avatar = document.createElement('div');
+    avatar.classList.add('avatar', 'bot');
+    avatar.textContent = 'AI';
+
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble', 'bot');
+    bubble.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    chatBox.appendChild(row);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return row;
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const btn = document.getElementById('send-btn');
+    const text = input.value.trim();
+    if (!text) return;
+
+    appendMessage('user', text);
+    input.value = '';
+    input.style.height = 'auto';
+    btn.disabled = true;
+
+    const typingRow = appendTyping();
+
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chatInput: text, sessionId: sessionId })
+      });
+
+      typingRow.remove();
+
+      if (!res.ok) throw new Error('Server error: ' + res.status);
+      const data = await res.json();
+
+      // Sesuaikan key output dari node AI Agent
+      const reply = data?.output || data?.text || data?.response || data?.message || JSON.stringify(data);
+      appendMessage('bot', reply);
+
+    } catch (err) {
+      typingRow.remove();
+      appendMessage('bot', '❌ **Gagal terhubung ke server.**\\n\\n`' + err.message + '`');
+    }
+
+    btn.disabled = false;
+    input.focus();
+  }
+
+  function clearChat() {
+    chatBox.innerHTML = '';
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.id = 'empty-state';
+    empty.innerHTML = '<div class="icon-big">💬</div><h3>Mulai Percakapan</h3><p>Ketik pertanyaan atau instruksi kamu di bawah ini.</p>';
+    chatBox.appendChild(empty);
+    // Generate session baru
+    sessionId = crypto.randomUUID();
+    localStorage.setItem('ai_chat_session_id', sessionId);
+    document.getElementById('session-label').textContent = 'ID: ' + sessionId.slice(0,8).toUpperCase();
+  }
+
+  // Enter kirim, Shift+Enter baris baru
+  textarea.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+</script>
 
 </body>
-</html>
+</html>'''
+
+import os
+os.makedirs('/root/output', exist_ok=True)
+with open('/root/output/ai-chat-interface.html', 'w', encoding='utf-8') as f:
+    f.write(html_template)
+
+print("File saved:", len(html_template), "characters")
