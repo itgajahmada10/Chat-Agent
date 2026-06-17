@@ -1,4 +1,4 @@
-html_content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -24,28 +24,6 @@ html_content = '''<!DOCTYPE html>
       --bubble-ai: #f8fafc;
       --bubble-user: #4e2b5c;
       --accent-blue: #0284c7;
-    }
-
-    /* === DARK MODE === */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-body: #0f172a;
-        --bg-card: #1e293b;
-        --border-color: #334155;
-        --text-main: #e2e8f0;
-        --text-muted: #94a3b8;
-        --bubble-ai: #1e293b;
-        --bubble-user: #4e2b5c;
-      }
-      #chat-box { background: #1e293b !important; }
-      .sidebar-header { background: #1e293b !important; }
-      #user-input { background: #1e293b !important; color: var(--text-main) !important; }
-      .input-area { background: #172032 !important; }
-      .project-item { background: #172032 !important; border-color: #334155 !important; }
-      .project-item:hover { background: #2d1a3a !important; }
-      .prompt-btn { background: #1e293b !important; color: var(--text-main) !important; }
-      .prompt-btn:hover { background: #2d1a3a !important; }
-      .btn-icon-only { background: #1e293b !important; color: var(--text-muted) !important; }
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -125,7 +103,6 @@ html_content = '''<!DOCTYPE html>
       transition: all 0.2s ease;
     }
     .project-item:hover { border-color: var(--primary); background: #f5f3ff; }
-    .project-item:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
     .project-item.active {
       background: var(--primary);
       color: white;
@@ -161,7 +138,6 @@ html_content = '''<!DOCTYPE html>
       font-family: 'Inter', sans-serif;
     }
     .prompt-btn:hover { background: #f5f3ff; border-color: var(--primary); color: var(--primary); }
-    .prompt-btn:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
 
     /* === MOBILE TOGGLE === */
     .btn-sidebar-toggle {
@@ -310,7 +286,6 @@ html_content = '''<!DOCTYPE html>
       border-top-left-radius: 3px;
     }
 
-    /* Timestamp */
     .msg-timestamp {
       font-size: 10px;
       color: var(--text-muted);
@@ -318,7 +293,6 @@ html_content = '''<!DOCTYPE html>
       padding: 0 4px;
     }
 
-    /* Markdown tables */
     .bubble.bot table {
       border-collapse: collapse;
       width: 100%;
@@ -347,7 +321,6 @@ html_content = '''<!DOCTYPE html>
     .bubble.user .media-attachment { background: rgba(255,255,255,0.12); color: white; }
     .media-attachment img { max-width: 100%; max-height: 180px; border-radius: 4px; display: block; }
 
-    /* Code Block */
     .code-container {
       position: relative;
       margin: 10px 0;
@@ -393,7 +366,6 @@ html_content = '''<!DOCTYPE html>
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* File Preview */
     .preview-container {
       display: none;
       padding: 10px 20px;
@@ -419,7 +391,6 @@ html_content = '''<!DOCTYPE html>
       display: flex; align-items: center; justify-content: center; font-weight: bold;
     }
 
-    /* Typing Indicator */
     .typing-indicator { display: flex; gap: 5px; padding: 6px 8px; align-items: center; }
     .typing-indicator span {
       width: 7px; height: 7px;
@@ -431,14 +402,8 @@ html_content = '''<!DOCTYPE html>
     .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
     @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-    /* File size warning */
-    .file-warning {
-      font-size: 11px;
-      color: #ef4444;
-      padding: 4px 0;
-    }
+    .file-warning { font-size: 11px; color: #ef4444; padding: 4px 0; }
 
-    /* Input Area */
     .input-area {
       padding: 14px 20px;
       background: #f8fafc;
@@ -497,18 +462,15 @@ html_content = '''<!DOCTYPE html>
       flex-shrink: 0;
     }
     .btn-icon-only:hover { background: #f1f5f9; color: var(--primary); border-color: var(--primary); }
-    .btn-icon-only:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
 
     #send-btn { background: var(--primary); color: white; min-width: 100px; justify-content: center; }
     #send-btn:hover { background: var(--primary-hover); }
     #send-btn:disabled { background: #94a3b8; cursor: not-allowed; }
     #clear-btn:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
 
-    /* === MOBILE RESPONSIVE === */
     @media (max-width: 768px) {
       body { padding: 0; align-items: stretch; }
       .app-container { flex-direction: column; height: 100dvh; gap: 0; padding: 0; max-width: 100%; }
-      
       .sidebar {
         position: fixed;
         left: 0; top: 0; bottom: 0;
@@ -520,10 +482,8 @@ html_content = '''<!DOCTYPE html>
       .sidebar.open { transform: translateX(0); }
       .sidebar-overlay { display: block; }
       .sidebar-overlay.visible { display: block; }
-      
       .chat-wrapper { border-radius: 0; height: 100dvh; border: none; }
       .btn-sidebar-toggle { display: flex !important; }
-      
       .bubble { font-size: 13.5px; }
       .msg-col { max-width: 88%; }
       #chat-box { padding: 14px 16px; }
@@ -688,7 +648,6 @@ html_content = '''<!DOCTYPE html>
     return now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
   }
 
-  // State
   const USER_NAME = 'PU';
   let sessionId = localStorage.getItem('ai_chat_session_id') || generateUUID();
   localStorage.setItem('ai_chat_session_id', sessionId);
@@ -711,7 +670,6 @@ html_content = '''<!DOCTYPE html>
   const fileWarning = document.getElementById('file-warning');
 
   let activeFileBase64 = null, activeFileName = '', activeFileType = '';
-
   const MAX_FILE_SIZE_MB = 10;
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -737,7 +695,6 @@ html_content = '''<!DOCTYPE html>
 
   async function selectProject(element, projectId, projectName) {
     if (element.classList.contains('active') || isSending) return;
-
     document.querySelectorAll('.project-item').forEach(i => {
       i.classList.remove('active');
       i.setAttribute('aria-selected', 'false');
@@ -831,7 +788,9 @@ html_content = '''<!DOCTYPE html>
     bubble.classList.add('bubble', role);
 
     if (role === 'bot') {
-      bubble.innerHTML = marked.parse(content);
+      let safeContent = content;
+      if (typeof safeContent !== 'string') safeContent = JSON.stringify(safeContent, null, 2);
+      bubble.innerHTML = marked.parse(safeContent);
     } else {
       bubble.textContent = content;
       if (fileBase64) {
@@ -959,9 +918,4 @@ html_content = '''<!DOCTYPE html>
 </script>
 
 </body>
-</html>'''
-
-with open('/root/ai_workspace_v2.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print("File saved:", len(html_content), "chars")
+</html>
