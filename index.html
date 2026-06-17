@@ -88,7 +88,7 @@
     
     .project-list { display: flex; flex-direction: column; gap: 8px; }
     .project-item {
-      padding: 10px 12px;
+      padding: 12px;
       border-radius: 8px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -96,7 +96,22 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      cursor: pointer;
+      transition: 0.2s;
     }
+    .project-item:hover {
+      border-color: var(--primary);
+      background: #f5f3ff;
+    }
+    /* Project Aktif Seleksi */
+    .project-item.active {
+      background: #4e2b5c;
+      color: white;
+      border-color: #4e2b5c;
+    }
+    .project-item.active .project-name { color: white; }
+    .project-item.active .project-status { background: rgba(255, 255, 255, 0.2); color: white; }
+
     .project-name { font-weight: 500; color: var(--text-main); }
     .project-status {
       font-size: 10px;
@@ -207,7 +222,6 @@
     .bubble.user { background: var(--bubble-user); color: #ffffff; border-top-right-radius: 2px; }
     .bubble.bot { background: var(--bubble-ai); color: var(--text-main); border: 1px solid #e2e8f0; border-top-left-radius: 2px; }
 
-    /* Media attachment */
     .media-attachment {
       background: rgba(0, 0, 0, 0.04);
       padding: 8px 12px;
@@ -222,7 +236,7 @@
     .bubble.user .media-attachment { background: rgba(255, 255, 255, 0.1); color: white; }
     .media-attachment img { max-width: 100%; max-height: 200px; border-radius: 4px; display: block; }
 
-    /* Custom Code Block Container + Copy Button */
+    /* Custom Code Block + Copy Button */
     .code-container {
       position: relative;
       margin: 12px 0;
@@ -340,6 +354,7 @@
 
 <div class="app-container">
   
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <h2>Workspace Directory</h2>
@@ -348,16 +363,16 @@
     <div class="sidebar-content">
       <div class="sidebar-section">
         <h3>Project Sedang Berjalan</h3>
-        <div class="project-list">
-          <div class="project-item">
+        <div class="project-list" id="project-list">
+          <div class="project-item active" onclick="selectProject(this, 'n8n-automation', 'n8n Automation')">
             <span class="project-name">n8n Automation</span>
             <span class="project-status status-active">Active</span>
           </div>
-          <div class="project-item">
+          <div class="project-item" onclick="selectProject(this, 'gsheet-sync', 'Google Sheets Sync')">
             <span class="project-name">Google Sheets Sync</span>
             <span class="project-status status-active">Active</span>
           </div>
-          <div class="project-item">
+          <div class="project-item" onclick="selectProject(this, 'ai-debugger', 'AI Code Debugger')">
             <span class="project-name">AI Code Debugger</span>
             <span class="project-status status-pending">Planning</span>
           </div>
@@ -375,6 +390,7 @@
     </div>
   </aside>
 
+  <!-- CHAT WINDOW -->
   <div class="chat-wrapper">
     <div class="chat-header">
       <div class="icon">
@@ -383,7 +399,7 @@
         </svg>
       </div>
       <div>
-        <h1>Workspace Intelligence</h1>
+        <h1 id="active-project-title">n8n Automation</h1>
         <p>Data & Automation Assistant</p>
       </div>
       <span class="session-badge" id="session-label">SID-XXXX</span>
@@ -429,7 +445,6 @@
     return `<div class="table-container"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
   };
 
-  // Custom code renderer untuk menyertakan tombol Copy otomatis
   renderer.code = function(code, language) {
     const validLanguage = language || 'code';
     return `
@@ -445,11 +460,9 @@
 
   marked.setOptions({ renderer: renderer, breaks: true });
 
-  // Fungsi Salin Kode ke Clipboard
   function copyToClipboard(button) {
     const pre = button.parentElement.nextElementSibling;
     const codeText = pre.textContent;
-
     navigator.clipboard.writeText(codeText).then(() => {
       button.textContent = 'Tersalin!';
       button.style.color = '#10b981';
@@ -457,8 +470,6 @@
         button.textContent = 'Salin Kode';
         button.style.color = '#94a3b8';
       }, 2000);
-    }).catch(err => {
-      console.error('Gagal menyalin:', err);
     });
   }
 
@@ -470,12 +481,13 @@
     });
   }
 
-  let sessionId = localStorage.getItem('ai_chat_session_id');
-  if (!sessionId) {
-    sessionId = generateUUID();
-    localStorage.setItem('ai_chat_session_id', sessionId);
-  }
+  // State Management
+  let sessionId = localStorage.getItem('ai_chat_session_id') || generateUUID();
+  localStorage.setItem('ai_chat_session_id', sessionId);
   document.getElementById('session-label').textContent = 'SID-' + sessionId.slice(0,6).toUpperCase();
+
+  let activeProjectId = 'n8n-automation'; // Project default saat pertama kali load
+  let activeProjectName = 'n8n Automation';
 
   const WEBHOOK_URL = 'https://n8.waruna-group.co.id/webhook/ai-chat-endpoint';
   const chatBox = document.getElementById('chat-box');
@@ -497,6 +509,27 @@
     textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
   });
 
+  // ====== SWITCH PROJECT SYSTEM ======
+  function selectProject(element, projectId, projectName) {
+    // 1. Hapus kelas 'active' dari semua project-item
+    document.querySelectorAll('.project-item').forEach(item => item.classList.remove('active'));
+    
+    // 2. Tambah kelas 'active' ke project yang diklik
+    element.classList.add('active');
+    
+    // 3. Update State & Header UI
+    activeProjectId = projectId;
+    activeProjectName = projectName;
+    document.getElementById('active-project-title').textContent = projectName;
+    
+    // 4. Reset & muat ulang riwayat percakapan khusus project ini
+    chatBox.innerHTML = '';
+    chatBox.appendChild(emptyState);
+    emptyState.style.display = 'block';
+    
+    loadHistoryFromGSheet();
+  }
+
   textarea.addEventListener('paste', e => {
     const items = (e.clipboardData || e.originalEvent.clipboardData).items;
     for (let index in items) {
@@ -517,18 +550,15 @@
     const reader = new FileReader();
     activeFileName = file.name;
     activeFileType = file.type;
-
     reader.onload = function(event) {
       activeFileBase64 = event.target.result;
       previewWrapper.innerHTML = '';
-
       if (file.type.startsWith('image/')) {
         previewWrapper.innerHTML = `<img src="${activeFileBase64}" alt="Preview"><button class="btn-remove-preview" onclick="clearFilePreview()">×</button>`;
       } else {
         const ext = file.name.split('.').pop().toUpperCase();
         previewWrapper.innerHTML = `<div class="doc-preview-box">📄 ${ext}</div><button class="btn-remove-preview" onclick="clearFilePreview()">×</button>`;
       }
-      
       fileDetails.textContent = file.name;
       previewContainer.style.display = 'flex';
     };
@@ -536,11 +566,8 @@
   }
 
   function clearFilePreview() {
-    activeFileBase64 = null;
-    activeFileName = '';
-    activeFileType = '';
-    previewWrapper.innerHTML = '';
-    previewContainer.style.display = 'none';
+    activeFileBase64 = null; activeFileName = ''; activeFileType = '';
+    previewWrapper.innerHTML = ''; previewContainer.style.display = 'none';
     document.getElementById('file-input').value = '';
   }
 
@@ -553,7 +580,6 @@
 
   function appendMessage(role, content, fileBase64 = null, fileName = '', fileType = '') {
     if (emptyState) emptyState.style.display = 'none';
-
     const row = document.createElement('div');
     row.classList.add('msg-row', role);
 
@@ -579,11 +605,9 @@
         bubble.appendChild(attachmentDiv);
       }
     }
-
     row.appendChild(avatar);
     row.appendChild(bubble);
     chatBox.appendChild(row);
-    
     row.scrollIntoView({ behavior: 'smooth', block: 'end' });
     return row;
   }
@@ -591,29 +615,26 @@
   function showLoadingIndicator() {
     const row = document.createElement('div');
     row.classList.add('msg-row', 'bot', 'loading-row');
-
     const avatar = document.createElement('div');
     avatar.classList.add('avatar', 'bot');
     avatar.textContent = 'AI';
-
     const bubble = document.createElement('div');
     bubble.classList.add('bubble', 'bot');
     bubble.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
-
-    row.appendChild(avatar);
-    row.appendChild(bubble);
+    row.appendChild(avatar); row.appendChild(bubble);
     chatBox.appendChild(row);
     row.scrollIntoView({ behavior: 'smooth' });
     return row;
   }
 
+  // === AMBIL RIWAYAT CHAT KHUSUS PROJECT YANG SEDANG AKTIF ===
   async function loadHistoryFromGSheet() {
     try {
-      const res = await fetch(`${WEBHOOK_URL}?sessionId=${sessionId}&action=loadHistory`);
+      const res = await fetch(`${WEBHOOK_URL}?sessionId=${sessionId}&projectId=${activeProjectId}&action=loadHistory`);
       if (res.ok) {
         const data = await res.json();
         if (data && Array.isArray(data.history)) {
-          chatBox.innerHTML = '';
+          chatBox.innerHTML = ''; // bersihkan loading/empty state
           data.history.forEach(msg => {
             appendMessage(msg.role, msg.content, msg.fileBase64, msg.fileName, msg.fileType);
           });
@@ -624,6 +645,7 @@
     }
   }
 
+  // === KIRIM PESAN DENGAN CONTEXT PROJECT ===
   async function sendMessage() {
     const text = textarea.value.trim();
     if (!text && !activeFileBase64) return;
@@ -643,12 +665,16 @@
     const loadingBubble = showLoadingIndicator();
 
     try {
+      // Sisipkan context sistem ke API payload agar Gemini tahu konteks project saat ini
+      const systemContext = `[Context: Kita sedang mendiskusikan project "${activeProjectName}"]. `;
+      
       const res = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          chatInput: text, 
+          chatInput: systemContext + text, // Menggabungkan context project ke prompt asli
           sessionId: sessionId,
+          projectId: activeProjectId,       // Dikirim ke n8n agar disimpan ke GSheet di kolom project yang benar
           fileData: fileToSend,
           fileName: nameToSend,
           fileType: typeToSend
@@ -657,7 +683,6 @@
 
       if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
       const data = await res.json();
-
       loadingBubble.remove();
 
       const reply = data?.output || data?.text || data?.response || JSON.stringify(data);
@@ -677,10 +702,6 @@
     chatBox.appendChild(emptyState);
     emptyState.style.display = 'block';
     clearFilePreview();
-    
-    sessionId = generateUUID();
-    localStorage.setItem('ai_chat_session_id', sessionId);
-    document.getElementById('session-label').textContent = 'SID-' + sessionId.slice(0,6).toUpperCase();
   }
 
   textarea.addEventListener('keydown', e => {
