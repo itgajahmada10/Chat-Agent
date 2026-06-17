@@ -40,7 +40,6 @@
       padding: 20px;
     }
 
-    /* Container Utama layout Sidebar + Chat */
     .app-container {
       display: flex;
       width: 100%;
@@ -49,7 +48,7 @@
       gap: 20px;
     }
 
-    /* === SIDEBAR STYLE === */
+    /* === SIDEBAR === */
     .sidebar {
       width: 320px;
       background: var(--bg-card);
@@ -87,12 +86,7 @@
       margin-bottom: 12px;
     }
     
-    /* Project List */
-    .project-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .project-list { display: flex; flex-direction: column; gap: 8px; }
     .project-item {
       padding: 10px 12px;
       border-radius: 8px;
@@ -113,12 +107,7 @@
     .status-active { background: #dcfce7; color: #15803d; }
     .status-pending { background: #fef9c3; color: #a16207; }
 
-    /* Quick Prompts */
-    .prompt-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .prompt-grid { display: flex; flex-direction: column; gap: 8px; }
     .prompt-btn {
       width: 100%;
       padding: 10px 12px;
@@ -137,7 +126,7 @@
       color: var(--primary);
     }
 
-    /* === CHAT CONTAINER STYLE === */
+    /* === CHAT CONTAINER === */
     .chat-wrapper {
       flex: 1;
       background: var(--bg-card);
@@ -194,10 +183,6 @@
       background: #ffffff;
       scroll-behavior: smooth;
     }
-    
-    #chat-box::-webkit-scrollbar { width: 6px; }
-    #chat-box::-webkit-scrollbar-track { background: #f1f5f9; }
-    #chat-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
     .msg-row { display: flex; gap: 12px; align-items: flex-start; }
     .msg-row.user { flex-direction: row-reverse; }
@@ -222,7 +207,7 @@
     .bubble.user { background: var(--bubble-user); color: #ffffff; border-top-right-radius: 2px; }
     .bubble.bot { background: var(--bubble-ai); color: var(--text-main); border: 1px solid #e2e8f0; border-top-left-radius: 2px; }
 
-    /* Media attachment style */
+    /* Media attachment */
     .media-attachment {
       background: rgba(0, 0, 0, 0.04);
       padding: 8px 12px;
@@ -234,70 +219,50 @@
       gap: 8px;
       border: 1px solid rgba(0,0,0,0.08);
     }
-    .bubble.user .media-attachment {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-    }
-    .media-attachment img {
-      max-width: 100%;
-      max-height: 200px;
-      border-radius: 4px;
-      display: block;
-    }
+    .bubble.user .media-attachment { background: rgba(255, 255, 255, 0.1); color: white; }
+    .media-attachment img { max-width: 100%; max-height: 200px; border-radius: 4px; display: block; }
 
-    /* Markdown Styling */
-    .bubble.bot p { margin-bottom: 12px; }
-    .bubble.bot p:last-child { margin-bottom: 0; }
-    
-    .bubble.bot code {
+    /* Custom Code Block Container + Copy Button */
+    .code-container {
+      position: relative;
+      margin: 12px 0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .code-header {
+      background: #1e1e24;
+      color: #94a3b8;
+      font-size: 11px;
+      padding: 6px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2d3139;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      background: #e2e8f0;
-      color: #b91c1c;
-      padding: 2px 6px;
+    }
+    .btn-copy-code {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
       border-radius: 4px;
     }
-    
-    /* Blok Kode Gelap */
+    .btn-copy-code:hover { background: rgba(255,255,255,0.1); color: #ffffff; }
+
     .bubble.bot pre {
       background: #282c34 !important;
       color: #abb2bf !important;
       padding: 16px;
-      border-radius: 8px;
+      margin: 0;
+      border-radius: 0 0 8px 8px;
       overflow-x: auto;
-      margin: 12px 0;
     }
-    .bubble.bot pre code {
-      background: transparent !important;
-      color: #abb2bf !important;
-      padding: 0;
-      font-size: 13px;
-    }
+    .bubble.bot pre code { background: transparent !important; color: #abb2bf !important; padding: 0; font-size: 13px; }
 
-    /* Tabel Responsif */
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
-      margin: 12px 0;
-      border-radius: 8px;
-      border: 1px solid #cbd5e1;
-    }
-    .bubble.bot table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13.5px;
-    }
-    .bubble.bot th, .bubble.bot td {
-      border: 1px solid #cbd5e1;
-      padding: 8px 12px;
-      text-align: left;
-    }
-    .bubble.bot th { background: #e2e8f0; font-weight: 600; }
-
-    .bubble.bot ul, .bubble.bot ol { padding-left: 20px; margin: 8px 0; }
-    .bubble.bot li { margin-bottom: 4px; }
-
-    /* Preview Upload File */
+    /* Preview Upload */
     .preview-container {
       display: none;
       padding: 12px 24px;
@@ -306,119 +271,68 @@
       align-items: center;
       gap: 12px;
     }
-    .preview-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-    .preview-wrapper img {
-      max-height: 80px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      display: block;
-    }
-    /* Dokumen non-image preview box */
+    .preview-wrapper { position: relative; display: inline-block; }
+    .preview-wrapper img { max-height: 80px; border-radius: 6px; border: 1px solid var(--border-color); display: block; }
     .doc-preview-box {
       width: 80px; height: 80px;
-      background: #e2e8f0;
-      border-radius: 6px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      font-size: 10px; font-weight: bold;
-      color: var(--text-muted);
-      border: 1px solid var(--border-color);
+      background: #e2e8f0; border-radius: 6px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: bold; color: var(--text-muted); border: 1px solid var(--border-color);
     }
     .btn-remove-preview {
       position: absolute;
       top: -6px; right: -6px;
-      background: #ef4444;
-      color: white;
-      border: none;
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      font-size: 10px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: bold;
+      background: #ef4444; color: white; border: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      font-size: 10px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-weight: bold;
     }
 
-    /* Animasi Loading AI */
-    .typing-indicator {
-      display: flex;
-      gap: 5px;
-      padding: 8px 10px;
-      align-items: center;
-    }
+    /* Loading AI */
+    .typing-indicator { display: flex; gap: 5px; padding: 8px 10px; align-items: center; }
     .typing-indicator span {
-      width: 8px; height: 8px;
-      background: var(--text-muted);
-      border-radius: 50%;
+      width: 8px; height: 8px; background: var(--text-muted); border-radius: 50%;
       animation: bounce 1.3s infinite ease-in-out;
     }
     .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
     .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
     /* Input Area */
     .input-area {
       padding: 18px 24px;
       background: #f8fafc;
       border-top: 1px solid var(--border-color);
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
+      display: flex; gap: 12px; align-items: flex-end;
     }
     #user-input {
-      flex: 1;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background: #ffffff;
-      color: var(--text-main);
-      font-size: 14.5px;
-      font-family: 'Inter', sans-serif;
-      resize: none;
-      max-height: 150px;
-      outline: none;
-      line-height: 1.5;
+      flex: 1; padding: 12px 16px; border-radius: 8px;
+      border: 1px solid var(--border-color); background: #ffffff; color: var(--text-main);
+      font-size: 14.5px; font-family: 'Inter', sans-serif; resize: none;
+      max-height: 150px; outline: none; line-height: 1.5;
     }
     #user-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(78, 43, 92, 0.1); }
 
     .btn-action {
-      padding: 12px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: 'Poppins', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      border: none;
-      display: flex; align-items: center; gap: 8px;
-      transition: 0.2s;
+      padding: 12px 20px; border-radius: 8px; cursor: pointer;
+      font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600;
+      border: none; display: flex; align-items: center; gap: 8px; transition: 0.2s;
     }
     .btn-icon-only {
-      padding: 12px;
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      color: var(--text-muted);
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: 0.2s;
+      padding: 12px; background: #ffffff; border: 1px solid #cbd5e1;
+      color: var(--text-muted); border-radius: 8px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: 0.2s;
     }
     .btn-icon-only:hover { background: #f1f5f9; color: var(--primary); }
 
     #send-btn { background: var(--primary); color: white; flex-shrink: 0; }
     #send-btn:hover { background: var(--primary-hover); }
     #send-btn:disabled { background: #94a3b8; cursor: not-allowed; }
-    
     #clear-btn:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
 
-    /* Responsif Ponsel */
     @media (max-width: 768px) {
       .app-container { flex-direction: column; height: 100vh; }
-      .sidebar { display: none; } /* Menyembunyikan sidebar di mobile agar rapi */
+      .sidebar { display: none; }
     }
   </style>
 </head>
@@ -426,14 +340,12 @@
 
 <div class="app-container">
   
-  <!-- SIDEBAR (DAFTAR PROJECT & QUICK PROMPTS) -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <h2>Workspace Directory</h2>
     </div>
     
     <div class="sidebar-content">
-      <!-- Section Project Aktif -->
       <div class="sidebar-section">
         <h3>Project Sedang Berjalan</h3>
         <div class="project-list">
@@ -452,7 +364,6 @@
         </div>
       </div>
       
-      <!-- Section Quick Prompt -->
       <div class="sidebar-section">
         <h3>Quick Prompt Templates</h3>
         <div class="prompt-grid">
@@ -464,7 +375,6 @@
     </div>
   </aside>
 
-  <!-- CHAT WINDOW -->
   <div class="chat-wrapper">
     <div class="chat-header">
       <div class="icon">
@@ -479,7 +389,6 @@
       <span class="session-badge" id="session-label">SID-XXXX</span>
     </div>
 
-    <!-- Chat Box -->
     <div id="chat-box">
       <div style="text-align:center; padding: 40px; color: #94a3b8;" id="empty-state">
         <h3 style="font-family:'Poppins'; color:#64748b; margin-bottom:8px;">Terminal Siap</h3>
@@ -487,17 +396,12 @@
       </div>
     </div>
 
-    <!-- Container Preview Gambar/Dokumen -->
     <div class="preview-container" id="preview-container">
-      <div class="preview-wrapper" id="preview-wrapper">
-        <!-- JS akan menaruh gambar/ikon dokumen di sini -->
-      </div>
+      <div class="preview-wrapper" id="preview-wrapper"></div>
       <span style="font-size: 12px; color: var(--text-muted);" id="file-details">dokumen.pdf</span>
     </div>
 
-    <!-- Input Area -->
     <div class="input-area">
-      <!-- Input File Tersembunyi (Mendukung Multi-format) -->
       <input type="file" id="file-input" accept="image/*,.pdf,.csv,.xlsx,.docx" style="display: none;" onchange="handleFileSelect(event)">
       
       <button class="btn-icon-only" title="Upload File (Gambar, PDF, Excel)" onclick="document.getElementById('file-input').click()">
@@ -520,20 +424,43 @@
 
 <script>
   const renderer = new marked.Renderer();
+  
   renderer.table = function(header, body) {
     return `<div class="table-container"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
   };
 
-  marked.setOptions({
-    renderer: renderer,
-    highlight: function(code, lang) {
-      if (lang && hljs.getLanguage(lang)) {
-        return hljs.highlight(code, { language: lang }).value;
-      }
-      return hljs.highlightAuto(code).value;
-    },
-    breaks: true
-  });
+  // Custom code renderer untuk menyertakan tombol Copy otomatis
+  renderer.code = function(code, language) {
+    const validLanguage = language || 'code';
+    return `
+      <div class="code-container">
+        <div class="code-header">
+          <span>${validLanguage.toUpperCase()}</span>
+          <button class="btn-copy-code" onclick="copyToClipboard(this)">Salin Kode</button>
+        </div>
+        <pre><code class="hljs ${validLanguage}">${hljs.highlightAuto(code).value}</code></pre>
+      </div>
+    `;
+  };
+
+  marked.setOptions({ renderer: renderer, breaks: true });
+
+  // Fungsi Salin Kode ke Clipboard
+  function copyToClipboard(button) {
+    const pre = button.parentElement.nextElementSibling;
+    const codeText = pre.textContent;
+
+    navigator.clipboard.writeText(codeText).then(() => {
+      button.textContent = 'Tersalin!';
+      button.style.color = '#10b981';
+      setTimeout(() => {
+        button.textContent = 'Salin Kode';
+        button.style.color = '#94a3b8';
+      }, 2000);
+    }).catch(err => {
+      console.error('Gagal menyalin:', err);
+    });
+  }
 
   function generateUUID() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -563,7 +490,6 @@
   let activeFileName = '';
   let activeFileType = '';
 
-  // Load Riwayat Chat dari Google Sheet via n8n saat halaman dimuat
   window.addEventListener('DOMContentLoaded', loadHistoryFromGSheet);
 
   textarea.addEventListener('input', () => {
@@ -571,7 +497,6 @@
     textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
   });
 
-  // ====== FITUR PASTE GAMBAR/FILE ======
   textarea.addEventListener('paste', e => {
     const items = (e.clipboardData || e.originalEvent.clipboardData).items;
     for (let index in items) {
@@ -583,13 +508,11 @@
     }
   });
 
-  // ====== FILE SELECTION ======
   function handleFileSelect(e) {
     const file = e.target.files[0];
     if (file) processFile(file);
   }
 
-  // Pengolah File (Gambar maupun Dokumen)
   function processFile(file) {
     const reader = new FileReader();
     activeFileName = file.name;
@@ -597,12 +520,11 @@
 
     reader.onload = function(event) {
       activeFileBase64 = event.target.result;
-      previewWrapper.innerHTML = ''; // reset preview
+      previewWrapper.innerHTML = '';
 
       if (file.type.startsWith('image/')) {
         previewWrapper.innerHTML = `<img src="${activeFileBase64}" alt="Preview"><button class="btn-remove-preview" onclick="clearFilePreview()">×</button>`;
       } else {
-        // Non-Gambar (PDF, Excel, dll)
         const ext = file.name.split('.').pop().toUpperCase();
         previewWrapper.innerHTML = `<div class="doc-preview-box">📄 ${ext}</div><button class="btn-remove-preview" onclick="clearFilePreview()">×</button>`;
       }
@@ -622,7 +544,6 @@
     document.getElementById('file-input').value = '';
   }
 
-  // Gunakan template prompt dari sidebar
   function applyTemplate(text) {
     textarea.value = text + " ";
     textarea.focus();
@@ -647,12 +568,9 @@
       bubble.innerHTML = marked.parse(content);
     } else {
       bubble.textContent = content;
-
-      // Lampiran File User di dalam Chat Log
       if (fileBase64) {
         const attachmentDiv = document.createElement('div');
         attachmentDiv.classList.add('media-attachment');
-        
         if (fileType.startsWith('image/')) {
           attachmentDiv.innerHTML = `<img src="${fileBase64}" alt="user-attachment">`;
         } else {
@@ -689,14 +607,13 @@
     return row;
   }
 
-  // === AMBIL RIWAYAT CHAT DARI GOOGLE SHEET (VIA WEBHOOK n8n) ===
   async function loadHistoryFromGSheet() {
     try {
       const res = await fetch(`${WEBHOOK_URL}?sessionId=${sessionId}&action=loadHistory`);
       if (res.ok) {
         const data = await res.json();
         if (data && Array.isArray(data.history)) {
-          chatBox.innerHTML = ''; // Bersihkan loading/empty state
+          chatBox.innerHTML = '';
           data.history.forEach(msg => {
             appendMessage(msg.role, msg.content, msg.fileBase64, msg.fileName, msg.fileType);
           });
@@ -707,20 +624,17 @@
     }
   }
 
-  // === KIRIM PESAN KE n8n ===
   async function sendMessage() {
     const text = textarea.value.trim();
     if (!text && !activeFileBase64) return;
     if (sendBtn.disabled) return;
 
-    // Duplikasi variabel agar tidak ter-reset
     const fileToSend = activeFileBase64;
     const nameToSend = activeFileName;
     const typeToSend = activeFileType;
 
     appendMessage('user', text, fileToSend, nameToSend, typeToSend);
     
-    // Reset area input
     textarea.value = '';
     textarea.style.height = 'auto';
     clearFilePreview();
@@ -735,7 +649,7 @@
         body: JSON.stringify({ 
           chatInput: text, 
           sessionId: sessionId,
-          fileData: fileToSend, // Mengirim Base64 file (bisa pdf/image/csv)
+          fileData: fileToSend,
           fileName: nameToSend,
           fileType: typeToSend
         })
