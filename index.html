@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html_content = '''<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
-  <!-- Parser Markdown & Highlight JS -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -27,10 +26,32 @@
       --accent-blue: #0284c7;
     }
 
+    /* === DARK MODE === */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-body: #0f172a;
+        --bg-card: #1e293b;
+        --border-color: #334155;
+        --text-main: #e2e8f0;
+        --text-muted: #94a3b8;
+        --bubble-ai: #1e293b;
+        --bubble-user: #4e2b5c;
+      }
+      #chat-box { background: #1e293b !important; }
+      .sidebar-header { background: #1e293b !important; }
+      #user-input { background: #1e293b !important; color: var(--text-main) !important; }
+      .input-area { background: #172032 !important; }
+      .project-item { background: #172032 !important; border-color: #334155 !important; }
+      .project-item:hover { background: #2d1a3a !important; }
+      .prompt-btn { background: #1e293b !important; color: var(--text-main) !important; }
+      .prompt-btn:hover { background: #2d1a3a !important; }
+      .btn-icon-only { background: #1e293b !important; color: var(--text-muted) !important; }
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: \'Inter\', sans-serif;
       background: var(--bg-body);
       color: var(--text-main);
       min-height: 100vh;
@@ -50,7 +71,7 @@
 
     /* === SIDEBAR === */
     .sidebar {
-      width: 320px;
+      width: 300px;
       background: var(--bg-card);
       border-radius: 12px;
       border: 1px solid var(--border-color);
@@ -58,37 +79,41 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      transition: transform 0.3s ease;
     }
     .sidebar-header {
-      padding: 20px;
+      padding: 18px 20px;
       border-bottom: 1px solid var(--border-color);
       background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     .sidebar-header h2 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 16px;
+      font-family: \'Poppins\', sans-serif;
+      font-size: 15px;
       color: var(--primary);
     }
     .sidebar-content {
       flex: 1;
       overflow-y: auto;
-      padding: 20px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 20px;
     }
     .sidebar-section h3 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 13px;
+      font-family: \'Poppins\', sans-serif;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       color: var(--text-muted);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     
-    .project-list { display: flex; flex-direction: column; gap: 8px; }
+    .project-list { display: flex; flex-direction: column; gap: 6px; }
     .project-item {
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 8px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -97,48 +122,68 @@
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      transition: 0.2s;
+      transition: all 0.2s ease;
     }
-    .project-item:hover {
-      border-color: var(--primary);
-      background: #f5f3ff;
-    }
-    /* Project Aktif Seleksi */
+    .project-item:hover { border-color: var(--primary); background: #f5f3ff; }
+    .project-item:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
     .project-item.active {
-      background: #4e2b5c;
+      background: var(--primary);
       color: white;
-      border-color: #4e2b5c;
+      border-color: var(--primary);
     }
     .project-item.active .project-name { color: white; }
-    .project-item.active .project-status { background: rgba(255, 255, 255, 0.2); color: white; }
+    .project-item.active .project-status { background: rgba(255,255,255,0.2); color: white; }
+    .project-item.loading { opacity: 0.6; pointer-events: none; }
 
-    .project-name { font-weight: 500; color: var(--text-main); }
+    .project-name { font-weight: 500; color: var(--text-main); font-size: 13px; }
     .project-status {
       font-size: 10px;
-      padding: 2px 6px;
+      padding: 2px 7px;
       border-radius: 4px;
       font-weight: 600;
+      white-space: nowrap;
     }
     .status-active { background: #dcfce7; color: #15803d; }
-    .status-pending { background: #fef9c3; color: #a16207; }
+    .status-planning { background: #fef9c3; color: #a16207; }
 
-    .prompt-grid { display: flex; flex-direction: column; gap: 8px; }
+    .prompt-grid { display: flex; flex-direction: column; gap: 6px; }
     .prompt-btn {
       width: 100%;
-      padding: 10px 12px;
+      padding: 9px 12px;
       background: #ffffff;
       border: 1px solid var(--border-color);
       border-radius: 8px;
       text-align: left;
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--text-main);
       cursor: pointer;
-      transition: 0.2s;
+      transition: all 0.2s;
+      font-family: \'Inter\', sans-serif;
     }
-    .prompt-btn:hover {
-      background: #f5f3ff;
-      border-color: var(--primary);
-      color: var(--primary);
+    .prompt-btn:hover { background: #f5f3ff; border-color: var(--primary); color: var(--primary); }
+    .prompt-btn:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    /* === MOBILE TOGGLE === */
+    .btn-sidebar-toggle {
+      display: none;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: \'Poppins\', sans-serif;
+      font-weight: 600;
+      align-items: center;
+      gap: 6px;
+    }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 99;
     }
 
     /* === CHAT CONTAINER === */
@@ -146,100 +191,166 @@
       flex: 1;
       background: var(--bg-card);
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
       border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      min-width: 0;
     }
 
     .chat-header {
       background: var(--primary);
-      padding: 16px 24px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       border-bottom: 1px solid rgba(0,0,0,0.1);
+      flex-shrink: 0;
     }
     .chat-header .icon {
-      width: 34px; height: 34px;
-      background: rgba(255,255,255,0.1);
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,0.12);
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
     }
     .chat-header h1 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 16px;
+      font-family: \'Poppins\', sans-serif;
+      font-size: 15px;
       color: #ffffff;
       margin: 0;
     }
     .chat-header p {
       font-size: 11px;
-      color: #cbd5e1;
+      color: rgba(255,255,255,0.65);
       margin: 0;
     }
     .session-badge {
       margin-left: auto;
       background: rgba(0,0,0,0.2);
-      color: #e2e8f0;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      color: rgba(255,255,255,0.75);
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-family: \'JetBrains Mono\', monospace;
+      font-size: 10px;
+      cursor: help;
+      flex-shrink: 0;
     }
 
     #chat-box {
       flex: 1;
       overflow-y: auto;
-      padding: 24px;
+      padding: 20px 24px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      background: #ffffff;
+      gap: 18px;
+      background: var(--bg-card);
       scroll-behavior: smooth;
     }
 
-    .msg-row { display: flex; gap: 12px; align-items: flex-start; }
+    /* === EMPTY STATE === */
+    #empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+    .empty-icon {
+      width: 64px; height: 64px;
+      background: #f1f5f9;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    #empty-state h3 {
+      font-family: \'Poppins\', sans-serif;
+      font-size: 16px;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+    #empty-state p { font-size: 13px; color: var(--text-muted); max-width: 260px; line-height: 1.5; }
+
+    .msg-row { display: flex; gap: 10px; align-items: flex-start; }
     .msg-row.user { flex-direction: row-reverse; }
 
     .avatar {
-      width: 32px; height: 32px;
-      border-radius: 8px;
+      width: 30px; height: 30px;
+      border-radius: 7px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; flex-shrink: 0; font-family: 'Poppins', sans-serif;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+      font-family: \'Poppins\', sans-serif;
     }
     .avatar.bot { background: #e2e8f0; color: var(--primary); }
     .avatar.user { background: var(--accent-blue); color: white; }
 
+    .msg-col { display: flex; flex-direction: column; gap: 4px; max-width: min(78%, 640px); }
+    .msg-row.user .msg-col { align-items: flex-end; }
+
     .bubble {
-      max-width: 80%;
-      padding: 14px 18px;
+      padding: 12px 16px;
       border-radius: 10px;
-      font-size: 14.5px;
-      line-height: 1.6;
+      font-size: 14px;
+      line-height: 1.65;
       word-break: break-word;
     }
-    .bubble.user { background: var(--bubble-user); color: #ffffff; border-top-right-radius: 2px; }
-    .bubble.bot { background: var(--bubble-ai); color: var(--text-main); border: 1px solid #e2e8f0; border-top-left-radius: 2px; }
+    .bubble.user {
+      background: var(--bubble-user);
+      color: #ffffff;
+      border-top-right-radius: 3px;
+    }
+    .bubble.bot {
+      background: var(--bubble-ai);
+      color: var(--text-main);
+      border: 1px solid #e2e8f0;
+      border-top-left-radius: 3px;
+    }
+
+    /* Timestamp */
+    .msg-timestamp {
+      font-size: 10px;
+      color: var(--text-muted);
+      opacity: 0.7;
+      padding: 0 4px;
+    }
+
+    /* Markdown tables */
+    .bubble.bot table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .bubble.bot th, .bubble.bot td {
+      border: 1px solid #e2e8f0;
+      padding: 7px 12px;
+      text-align: left;
+    }
+    .bubble.bot th { background: #f1f5f9; font-weight: 600; }
+    .bubble.bot tr:nth-child(even) td { background: #fafafa; }
 
     .media-attachment {
-      background: rgba(0, 0, 0, 0.04);
-      padding: 8px 12px;
+      background: rgba(0,0,0,0.04);
+      padding: 7px 11px;
       border-radius: 6px;
-      margin-top: 8px;
-      font-size: 13px;
+      margin-top: 6px;
+      font-size: 12.5px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
       border: 1px solid rgba(0,0,0,0.08);
     }
-    .bubble.user .media-attachment { background: rgba(255, 255, 255, 0.1); color: white; }
-    .media-attachment img { max-width: 100%; max-height: 200px; border-radius: 4px; display: block; }
+    .bubble.user .media-attachment { background: rgba(255,255,255,0.12); color: white; }
+    .media-attachment img { max-width: 100%; max-height: 180px; border-radius: 4px; display: block; }
 
-    /* Custom Code Block + Copy Button */
+    /* Code Block */
     .code-container {
       position: relative;
-      margin: 12px 0;
+      margin: 10px 0;
       border-radius: 8px;
       overflow: hidden;
     }
@@ -247,12 +358,12 @@
       background: #1e1e24;
       color: #94a3b8;
       font-size: 11px;
-      padding: 6px 16px;
+      padding: 6px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #2d3139;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: \'JetBrains Mono\', monospace;
     }
     .btn-copy-code {
       background: transparent;
@@ -263,118 +374,195 @@
       font-weight: 500;
       padding: 2px 8px;
       border-radius: 4px;
+      font-family: \'Inter\', sans-serif;
     }
     .btn-copy-code:hover { background: rgba(255,255,255,0.1); color: #ffffff; }
 
     .bubble.bot pre {
       background: #282c34 !important;
-      color: #abb2bf !important;
-      padding: 16px;
+      padding: 14px 16px;
       margin: 0;
       border-radius: 0 0 8px 8px;
       overflow-x: auto;
     }
-    .bubble.bot pre code { background: transparent !important; color: #abb2bf !important; padding: 0; font-size: 13px; }
+    .bubble.bot pre code {
+      background: transparent !important;
+      color: #abb2bf !important;
+      padding: 0;
+      font-size: 12.5px;
+      font-family: \'JetBrains Mono\', monospace;
+    }
 
-    /* Preview Upload */
+    /* File Preview */
     .preview-container {
       display: none;
-      padding: 12px 24px;
+      padding: 10px 20px;
       background: #f1f5f9;
       border-top: 1px solid var(--border-color);
       align-items: center;
       gap: 12px;
     }
     .preview-wrapper { position: relative; display: inline-block; }
-    .preview-wrapper img { max-height: 80px; border-radius: 6px; border: 1px solid var(--border-color); display: block; }
+    .preview-wrapper img { max-height: 70px; border-radius: 6px; border: 1px solid var(--border-color); display: block; }
     .doc-preview-box {
-      width: 80px; height: 80px;
+      width: 70px; height: 70px;
       background: #e2e8f0; border-radius: 6px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       font-size: 10px; font-weight: bold; color: var(--text-muted); border: 1px solid var(--border-color);
     }
     .btn-remove-preview {
       position: absolute;
-      top: -6px; right: -6px;
+      top: -5px; right: -5px;
       background: #ef4444; color: white; border: none;
-      width: 18px; height: 18px; border-radius: 50%;
+      width: 17px; height: 17px; border-radius: 50%;
       font-size: 10px; cursor: pointer;
       display: flex; align-items: center; justify-content: center; font-weight: bold;
     }
 
-    /* Loading AI */
-    .typing-indicator { display: flex; gap: 5px; padding: 8px 10px; align-items: center; }
+    /* Typing Indicator */
+    .typing-indicator { display: flex; gap: 5px; padding: 6px 8px; align-items: center; }
     .typing-indicator span {
-      width: 8px; height: 8px; background: var(--text-muted); border-radius: 50%;
+      width: 7px; height: 7px;
+      background: var(--text-muted);
+      border-radius: 50%;
       animation: bounce 1.3s infinite ease-in-out;
     }
     .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
     .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+    /* File size warning */
+    .file-warning {
+      font-size: 11px;
+      color: #ef4444;
+      padding: 4px 0;
+    }
 
     /* Input Area */
     .input-area {
-      padding: 18px 24px;
+      padding: 14px 20px;
       background: #f8fafc;
       border-top: 1px solid var(--border-color);
-      display: flex; gap: 12px; align-items: flex-end;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-shrink: 0;
     }
     #user-input {
-      flex: 1; padding: 12px 16px; border-radius: 8px;
-      border: 1px solid var(--border-color); background: #ffffff; color: var(--text-main);
-      font-size: 14.5px; font-family: 'Inter', sans-serif; resize: none;
-      max-height: 150px; outline: none; line-height: 1.5;
+      flex: 1;
+      padding: 11px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      color: var(--text-main);
+      font-size: 14px;
+      font-family: \'Inter\', sans-serif;
+      resize: none;
+      max-height: 130px;
+      outline: none;
+      line-height: 1.5;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    #user-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(78, 43, 92, 0.1); }
+    #user-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(78,43,92,0.1);
+    }
+    #user-input::placeholder { color: #94a3b8; }
 
     .btn-action {
-      padding: 12px 20px; border-radius: 8px; cursor: pointer;
-      font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600;
-      border: none; display: flex; align-items: center; gap: 8px; transition: 0.2s;
+      padding: 11px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: \'Poppins\', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s;
+      flex-shrink: 0;
     }
     .btn-icon-only {
-      padding: 12px; background: #ffffff; border: 1px solid #cbd5e1;
-      color: var(--text-muted); border-radius: 8px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; transition: 0.2s;
+      padding: 11px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
     }
-    .btn-icon-only:hover { background: #f1f5f9; color: var(--primary); }
+    .btn-icon-only:hover { background: #f1f5f9; color: var(--primary); border-color: var(--primary); }
+    .btn-icon-only:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
 
-    #send-btn { background: var(--primary); color: white; flex-shrink: 0; }
+    #send-btn { background: var(--primary); color: white; min-width: 100px; justify-content: center; }
     #send-btn:hover { background: var(--primary-hover); }
     #send-btn:disabled { background: #94a3b8; cursor: not-allowed; }
     #clear-btn:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
 
+    /* === MOBILE RESPONSIVE === */
     @media (max-width: 768px) {
-      .app-container { flex-direction: column; height: 100vh; }
-      .sidebar { display: none; }
+      body { padding: 0; align-items: stretch; }
+      .app-container { flex-direction: column; height: 100dvh; gap: 0; padding: 0; max-width: 100%; }
+      
+      .sidebar {
+        position: fixed;
+        left: 0; top: 0; bottom: 0;
+        z-index: 100;
+        border-radius: 0 12px 12px 0;
+        transform: translateX(-100%);
+        width: 280px;
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay { display: block; }
+      .sidebar-overlay.visible { display: block; }
+      
+      .chat-wrapper { border-radius: 0; height: 100dvh; border: none; }
+      .btn-sidebar-toggle { display: flex !important; }
+      
+      .bubble { font-size: 13.5px; }
+      .msg-col { max-width: 88%; }
+      #chat-box { padding: 14px 16px; }
+      .input-area { padding: 10px 12px; }
     }
   </style>
 </head>
 <body>
 
+<div class="sidebar-overlay id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <div class="app-container">
   
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Workspace navigation">
     <div class="sidebar-header">
       <h2>Workspace Directory</h2>
     </div>
-    
     <div class="sidebar-content">
       <div class="sidebar-section">
         <h3>Project Sedang Berjalan</h3>
-        <div class="project-list" id="project-list">
-          <div class="project-item active" onclick="selectProject(this, 'n8n-automation', 'n8n Automation')">
+        <div class="project-list" id="project-list" role="listbox" aria-label="Daftar project">
+          <div class="project-item active" role="option" aria-selected="true" tabindex="0"
+               onclick="selectProject(this, \'n8n-automation\', \'n8n Automation\')"
+               onkeydown="if(event.key===\'Enter\')selectProject(this,\'n8n-automation\',\'n8n Automation\')">
             <span class="project-name">n8n Automation</span>
             <span class="project-status status-active">Active</span>
           </div>
-          <div class="project-item" onclick="selectProject(this, 'gsheet-sync', 'Google Sheets Sync')">
+          <div class="project-item" role="option" aria-selected="false" tabindex="0"
+               onclick="selectProject(this, \'gsheet-sync\', \'Google Sheets Sync\')"
+               onkeydown="if(event.key===\'Enter\')selectProject(this,\'gsheet-sync\',\'Google Sheets Sync\')">
             <span class="project-name">Google Sheets Sync</span>
             <span class="project-status status-active">Active</span>
           </div>
-          <div class="project-item" onclick="selectProject(this, 'ai-debugger', 'AI Code Debugger')">
+          <div class="project-item" role="option" aria-selected="false" tabindex="0"
+               onclick="selectProject(this, \'ai-debugger\', \'AI Code Debugger\')"
+               onkeydown="if(event.key===\'Enter\')selectProject(this,\'ai-debugger\',\'AI Code Debugger\')">
             <span class="project-name">AI Code Debugger</span>
-            <span class="project-status status-pending">Planning</span>
+            <span class="project-status status-planning">Planning</span>
           </div>
         </div>
       </div>
@@ -382,9 +570,9 @@
       <div class="sidebar-section">
         <h3>Quick Prompt Templates</h3>
         <div class="prompt-grid">
-          <button class="prompt-btn" onclick="applyTemplate('Tolong analisis potongan file/script berikut ini:')">🔍 Analisis Script/File</button>
-          <button class="prompt-btn" onclick="applyTemplate('Tolong perbaiki atau rapikan struktur database/tabel berikut:')">📊 Rapikan Data Tabel</button>
-          <button class="prompt-btn" onclick="applyTemplate('Ubah struktur data mentah ini menjadi JSON valid:')">🛠️ Konversi ke JSON</button>
+          <button class="prompt-btn" onclick="applyTemplate(\'Tolong analisis potongan file/script berikut ini:\')">🔍 Analisis Script/File</button>
+          <button class="prompt-btn" onclick="applyTemplate(\'Tolong perbaiki atau rapikan struktur database/tabel berikut:\')">📊 Rapikan Data Tabel</button>
+          <button class="prompt-btn" onclick="applyTemplate(\'Ubah struktur data mentah ini menjadi JSON valid:\')">🛠️ Konversi ke JSON</button>
         </div>
       </div>
     </div>
@@ -393,8 +581,13 @@
   <!-- CHAT WINDOW -->
   <div class="chat-wrapper">
     <div class="chat-header">
+      <!-- Mobile: tombol buka sidebar -->
+      <button class="btn-sidebar-toggle" id="sidebar-toggle-btn" onclick="openSidebar()" aria-label="Buka menu project" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        Menu
+      </button>
       <div class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M21.17 8H12V2.83"/>
         </svg>
       </div>
@@ -402,36 +595,52 @@
         <h1 id="active-project-title">n8n Automation</h1>
         <p>Data & Automation Assistant</p>
       </div>
-      <span class="session-badge" id="session-label">SID-XXXX</span>
+      <span class="session-badge" id="session-label" title="Session ID aktif">SID-XXXX</span>
     </div>
 
-    <div id="chat-box">
-      <div style="text-align:center; padding: 40px; color: #94a3b8;" id="empty-state">
-        <h3 style="font-family:'Poppins'; color:#64748b; margin-bottom:8px;">Terminal Siap</h3>
-        <p style="font-size:13px;">Kirim instruksi, upload dokumen/gambar, atau gunakan pintasan template.</p>
+    <div id="chat-box" role="log" aria-live="polite" aria-label="Riwayat percakapan">
+      <div id="empty-state">
+        <div class="empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4e2b5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h3>Terminal Siap</h3>
+        <p>Kirim instruksi, upload dokumen atau gambar, atau pilih template di sidebar.</p>
       </div>
     </div>
 
     <div class="preview-container" id="preview-container">
       <div class="preview-wrapper" id="preview-wrapper"></div>
-      <span style="font-size: 12px; color: var(--text-muted);" id="file-details">dokumen.pdf</span>
+      <div>
+        <span style="font-size: 12px; color: var(--text-muted);" id="file-details"></span>
+        <div class="file-warning" id="file-warning" style="display:none;"></div>
+      </div>
     </div>
 
     <div class="input-area">
       <input type="file" id="file-input" accept="image/*,.pdf,.csv,.xlsx,.docx" style="display: none;" onchange="handleFileSelect(event)">
       
-      <button class="btn-icon-only" title="Upload File (Gambar, PDF, Excel)" onclick="document.getElementById('file-input').click()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+      <button class="btn-icon-only" title="Upload File (Gambar, PDF, Excel, CSV)" aria-label="Upload file" onclick="document.getElementById(\'file-input\').click()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+        </svg>
       </button>
       
-      <textarea id="user-input" rows="1" placeholder="Ketik pesan atau paste gambar/file..."></textarea>
+      <textarea id="user-input" rows="1" placeholder="Ketik pesan atau paste gambar/file..." aria-label="Input pesan"></textarea>
       
-      <button id="clear-btn" class="btn-icon-only" title="Reset Session" onclick="clearChat()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+      <button id="clear-btn" class="btn-icon-only" title="Reset Session" aria-label="Reset percakapan" onclick="clearChat()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+        </svg>
       </button>
-      <button id="send-btn" class="btn-action" onclick="sendMessage()">
-        KIRIM
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+
+      <button id="send-btn" class="btn-action" onclick="sendMessage()" aria-label="Kirim pesan">
+        <span id="send-label">KIRIM</span>
+        <svg id="send-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+        </svg>
       </button>
     </div>
   </div>
@@ -440,104 +649,127 @@
 
 <script>
   const renderer = new marked.Renderer();
-  
+
   renderer.table = function(header, body) {
-    return `<div class="table-container"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
+    return `<div style="overflow-x:auto;margin:10px 0"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
   };
 
   renderer.code = function(code, language) {
-    const validLanguage = language || 'code';
+    const lang = language || \'plaintext\';
+    const highlighted = hljs.getLanguage(lang) ? hljs.highlight(code, { language: lang }).value : hljs.highlightAuto(code).value;
     return `
       <div class="code-container">
         <div class="code-header">
-          <span>${validLanguage.toUpperCase()}</span>
+          <span>${lang.toUpperCase()}</span>
           <button class="btn-copy-code" onclick="copyToClipboard(this)">Salin Kode</button>
         </div>
-        <pre><code class="hljs ${validLanguage}">${hljs.highlightAuto(code).value}</code></pre>
-      </div>
-    `;
+        <pre><code class="hljs ${lang}">${highlighted}</code></pre>
+      </div>`;
   };
 
-  marked.setOptions({ renderer: renderer, breaks: true });
+  marked.setOptions({ renderer, breaks: true, gfm: true });
 
   function copyToClipboard(button) {
-    const pre = button.parentElement.nextElementSibling;
-    const codeText = pre.textContent;
-    navigator.clipboard.writeText(codeText).then(() => {
-      button.textContent = 'Tersalin!';
-      button.style.color = '#10b981';
-      setTimeout(() => {
-        button.textContent = 'Salin Kode';
-        button.style.color = '#94a3b8';
-      }, 2000);
+    const code = button.closest(\'.code-container\').querySelector(\'pre\').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      button.textContent = \'✓ Tersalin\';
+      button.style.color = \'#10b981\';
+      setTimeout(() => { button.textContent = \'Salin Kode\'; button.style.color = \'\'; }, 2000);
     });
   }
 
   function generateUUID() {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    if (typeof crypto !== \'undefined\' && crypto.randomUUID) return crypto.randomUUID();
+    return \'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx\'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0, v = c === \'x\' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
   }
 
-  // State Management
-  let sessionId = localStorage.getItem('ai_chat_session_id') || generateUUID();
-  localStorage.setItem('ai_chat_session_id', sessionId);
-  document.getElementById('session-label').textContent = 'SID-' + sessionId.slice(0,6).toUpperCase();
-
-  let activeProjectId = 'n8n-automation'; // Project default saat pertama kali load
-  let activeProjectName = 'n8n Automation';
-
-  const WEBHOOK_URL = 'https://n8.waruna-group.co.id/webhook/ai-chat-endpoint';
-  const chatBox = document.getElementById('chat-box');
-  const emptyState = document.getElementById('empty-state');
-  const textarea = document.getElementById('user-input');
-  const sendBtn = document.getElementById('send-btn');
-  const previewContainer = document.getElementById('preview-container');
-  const previewWrapper = document.getElementById('preview-wrapper');
-  const fileDetails = document.getElementById('file-details');
-
-  let activeFileBase64 = null;
-  let activeFileName = '';
-  let activeFileType = '';
-
-  window.addEventListener('DOMContentLoaded', loadHistoryFromGSheet);
-
-  textarea.addEventListener('input', () => {
-    textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
-  });
-
-  // ====== SWITCH PROJECT SYSTEM ======
-  function selectProject(element, projectId, projectName) {
-    // 1. Hapus kelas 'active' dari semua project-item
-    document.querySelectorAll('.project-item').forEach(item => item.classList.remove('active'));
-    
-    // 2. Tambah kelas 'active' ke project yang diklik
-    element.classList.add('active');
-    
-    // 3. Update State & Header UI
-    activeProjectId = projectId;
-    activeProjectName = projectName;
-    document.getElementById('active-project-title').textContent = projectName;
-    
-    // 4. Reset & muat ulang riwayat percakapan khusus project ini
-    chatBox.innerHTML = '';
-    chatBox.appendChild(emptyState);
-    emptyState.style.display = 'block';
-    
-    loadHistoryFromGSheet();
+  function formatTime() {
+    const now = new Date();
+    return now.toLocaleTimeString(\'id-ID\', { hour: \'2-digit\', minute: \'2-digit\' });
   }
 
-  textarea.addEventListener('paste', e => {
+  // State
+  const USER_NAME = \'PU\'; // Bisa diganti dengan var config atau localStorage
+  let sessionId = localStorage.getItem(\'ai_chat_session_id\') || generateUUID();
+  localStorage.setItem(\'ai_chat_session_id\', sessionId);
+  document.getElementById(\'session-label\').textContent = \'SID-\' + sessionId.slice(0, 6).toUpperCase();
+
+  let activeProjectId = \'n8n-automation\';
+  let activeProjectName = \'n8n Automation\';
+  let isSending = false;
+
+  const WEBHOOK_URL = \'https://n8.waruna-group.co.id/webhook/ai-chat-endpoint\';
+  const chatBox = document.getElementById(\'chat-box\');
+  const emptyState = document.getElementById(\'empty-state\');
+  const textarea = document.getElementById(\'user-input\');
+  const sendBtn = document.getElementById(\'send-btn\');
+  const sendLabel = document.getElementById(\'send-label\');
+  const sendIcon = document.getElementById(\'send-icon\');
+  const previewContainer = document.getElementById(\'preview-container\');
+  const previewWrapper = document.getElementById(\'preview-wrapper\');
+  const fileDetails = document.getElementById(\'file-details\');
+  const fileWarning = document.getElementById(\'file-warning\');
+
+  let activeFileBase64 = null, activeFileName = \'\', activeFileType = \'\';
+
+  const MAX_FILE_SIZE_MB = 10;
+
+  window.addEventListener(\'DOMContentLoaded\', () => {
+    loadHistoryFromGSheet();
+    // Tampilkan toggle button di mobile
+    if (window.innerWidth <= 768) {
+      document.getElementById(\'sidebar-toggle-btn\').style.display = \'flex\';
+    }
+  });
+
+  // Mobile sidebar
+  function openSidebar() {
+    document.getElementById(\'sidebar\').classList.add(\'open\');
+    document.getElementById(\'sidebar-overlay\').classList.add(\'visible\');
+  }
+  function closeSidebar() {
+    document.getElementById(\'sidebar\').classList.remove(\'open\');
+    document.getElementById(\'sidebar-overlay\').classList.remove(\'visible\');
+  }
+
+  textarea.addEventListener(\'input\', () => {
+    textarea.style.height = \'auto\';
+    textarea.style.height = Math.min(textarea.scrollHeight, 130) + \'px\';
+  });
+
+  // ====== PROJECT SWITCH ======
+  async function selectProject(element, projectId, projectName) {
+    if (element.classList.contains(\'active\') || isSending) return;
+
+    document.querySelectorAll(\'.project-item\').forEach(i => {
+      i.classList.remove(\'active\');
+      i.setAttribute(\'aria-selected\', \'false\');
+    });
+    element.classList.add(\'active\', \'loading\');
+    element.setAttribute(\'aria-selected\', \'true\');
+
+    activeProjectId = projectId;
+    activeProjectName = projectName;
+    document.getElementById(\'active-project-title\').textContent = projectName;
+
+    chatBox.innerHTML = \'\';
+    const spinner = document.createElement(\'div\');
+    spinner.style.cssText = \'text-align:center;padding:30px;color:#94a3b8;font-size:13px;\';
+    spinner.textContent = \'Memuat riwayat...\';
+    chatBox.appendChild(spinner);
+
+    await loadHistoryFromGSheet();
+    element.classList.remove(\'loading\');
+    closeSidebar();
+  }
+
+  textarea.addEventListener(\'paste\', e => {
     const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-    for (let index in items) {
-      const item = items[index];
-      if (item.kind === 'file') {
-        const file = item.getAsFile();
-        processFile(file);
-      }
+    for (const item of items) {
+      if (item.kind === \'file\') processFile(item.getAsFile());
     }
   });
 
@@ -547,170 +779,195 @@
   }
 
   function processFile(file) {
+    fileWarning.style.display = \'none\';
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      fileWarning.textContent = `⚠️ File terlalu besar (maks ${MAX_FILE_SIZE_MB}MB). Pilih file lain.`;
+      fileWarning.style.display = \'block\';
+      previewContainer.style.display = \'flex\';
+      return;
+    }
     const reader = new FileReader();
     activeFileName = file.name;
     activeFileType = file.type;
-    reader.onload = function(event) {
-      activeFileBase64 = event.target.result;
-      previewWrapper.innerHTML = '';
-      if (file.type.startsWith('image/')) {
-        previewWrapper.innerHTML = `<img src="${activeFileBase64}" alt="Preview"><button class="btn-remove-preview" onclick="clearFilePreview()">×</button>`;
+    reader.onload = e => {
+      activeFileBase64 = e.target.result;
+      previewWrapper.innerHTML = \'\';
+      if (file.type.startsWith(\'image/\')) {
+        previewWrapper.innerHTML = `<img src="${activeFileBase64}" alt="Preview"><button class="btn-remove-preview" aria-label="Hapus file" onclick="clearFilePreview()">×</button>`;
       } else {
-        const ext = file.name.split('.').pop().toUpperCase();
-        previewWrapper.innerHTML = `<div class="doc-preview-box">📄 ${ext}</div><button class="btn-remove-preview" onclick="clearFilePreview()">×</button>`;
+        const ext = file.name.split(\'.\').pop().toUpperCase();
+        previewWrapper.innerHTML = `<div class="doc-preview-box">📄<br>${ext}</div><button class="btn-remove-preview" aria-label="Hapus file" onclick="clearFilePreview()">×</button>`;
       }
-      fileDetails.textContent = file.name;
-      previewContainer.style.display = 'flex';
+      fileDetails.textContent = file.name + \' (\' + (file.size / 1024).toFixed(1) + \' KB)\';
+      previewContainer.style.display = \'flex\';
     };
     reader.readAsDataURL(file);
   }
 
   function clearFilePreview() {
-    activeFileBase64 = null; activeFileName = ''; activeFileType = '';
-    previewWrapper.innerHTML = ''; previewContainer.style.display = 'none';
-    document.getElementById('file-input').value = '';
+    activeFileBase64 = null; activeFileName = \'\'; activeFileType = \'\';
+    previewWrapper.innerHTML = \'\';
+    previewContainer.style.display = \'none\';
+    fileWarning.style.display = \'none\';
+    document.getElementById(\'file-input\').value = \'\';
   }
 
   function applyTemplate(text) {
-    textarea.value = text + " ";
+    textarea.value = text + \' \';
     textarea.focus();
-    textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+    textarea.style.height = \'auto\';
+    textarea.style.height = Math.min(textarea.scrollHeight, 130) + \'px\';
+    closeSidebar();
   }
 
-  function appendMessage(role, content, fileBase64 = null, fileName = '', fileType = '') {
-    if (emptyState) emptyState.style.display = 'none';
-    const row = document.createElement('div');
-    row.classList.add('msg-row', role);
+  function appendMessage(role, content, fileBase64 = null, fileName = \'\', fileType = \'\') {
+    emptyState.style.display = \'none\';
+    const row = document.createElement(\'div\');
+    row.classList.add(\'msg-row\', role);
 
-    const avatar = document.createElement('div');
-    avatar.classList.add('avatar', role);
-    avatar.textContent = role === 'user' ? 'PU' : 'AI';
+    const avatar = document.createElement(\'div\');
+    avatar.classList.add(\'avatar\', role);
+    avatar.textContent = role === \'user\' ? USER_NAME : \'AI\';
+    avatar.setAttribute(\'aria-hidden\', \'true\');
 
-    const bubble = document.createElement('div');
-    bubble.classList.add('bubble', role);
+    const col = document.createElement(\'div\');
+    col.classList.add(\'msg-col\');
 
-    if (role === 'bot') {
+    const bubble = document.createElement(\'div\');
+    bubble.classList.add(\'bubble\', role);
+
+    if (role === \'bot\') {
       bubble.innerHTML = marked.parse(content);
     } else {
       bubble.textContent = content;
       if (fileBase64) {
-        const attachmentDiv = document.createElement('div');
-        attachmentDiv.classList.add('media-attachment');
-        if (fileType.startsWith('image/')) {
-          attachmentDiv.innerHTML = `<img src="${fileBase64}" alt="user-attachment">`;
-        } else {
-          attachmentDiv.innerHTML = `📄 <strong>${fileName}</strong>`;
-        }
-        bubble.appendChild(attachmentDiv);
+        const att = document.createElement(\'div\');
+        att.classList.add(\'media-attachment\');
+        att.innerHTML = fileType.startsWith(\'image/\') ? `<img src="${fileBase64}" alt="attachment">` : `📄 <strong>${fileName}</strong>`;
+        bubble.appendChild(att);
       }
     }
+
+    const ts = document.createElement(\'span\');
+    ts.classList.add(\'msg-timestamp\');
+    ts.textContent = formatTime();
+    ts.setAttribute(\'aria-label\', \'Dikirim \' + ts.textContent);
+
+    col.appendChild(bubble);
+    col.appendChild(ts);
     row.appendChild(avatar);
-    row.appendChild(bubble);
+    row.appendChild(col);
     chatBox.appendChild(row);
-    row.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    chatBox.scrollTop = chatBox.scrollHeight;
     return row;
   }
 
   function showLoadingIndicator() {
-    const row = document.createElement('div');
-    row.classList.add('msg-row', 'bot', 'loading-row');
-    const avatar = document.createElement('div');
-    avatar.classList.add('avatar', 'bot');
-    avatar.textContent = 'AI';
-    const bubble = document.createElement('div');
-    bubble.classList.add('bubble', 'bot');
-    bubble.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
-    row.appendChild(avatar); row.appendChild(bubble);
+    const row = document.createElement(\'div\');
+    row.classList.add(\'msg-row\', \'bot\', \'loading-row\');
+    const avatar = document.createElement(\'div\');
+    avatar.classList.add(\'avatar\', \'bot\');
+    avatar.textContent = \'AI\';
+    const col = document.createElement(\'div\');
+    col.classList.add(\'msg-col\');
+    const bubble = document.createElement(\'div\');
+    bubble.classList.add(\'bubble\', \'bot\');
+    bubble.innerHTML = `<div class="typing-indicator" aria-label="AI sedang mengetik"><span></span><span></span><span></span></div>`;
+    col.appendChild(bubble);
+    row.appendChild(avatar);
+    row.appendChild(col);
     chatBox.appendChild(row);
-    row.scrollIntoView({ behavior: 'smooth' });
+    chatBox.scrollTop = chatBox.scrollHeight;
     return row;
   }
 
-  // === AMBIL RIWAYAT CHAT KHUSUS PROJECT YANG SEDANG AKTIF ===
-  async function loadHistoryFromGSheet() {
-    try {
-      const res = await fetch(`${WEBHOOK_URL}?sessionId=${sessionId}&projectId=${activeProjectId}&action=loadHistory`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.history)) {
-          chatBox.innerHTML = ''; // bersihkan loading/empty state
-          data.history.forEach(msg => {
-            appendMessage(msg.role, msg.content, msg.fileBase64, msg.fileName, msg.fileType);
-          });
-        }
-      }
-    } catch (err) {
-      console.warn("Gagal sinkronisasi riwayat:", err);
+  function setSendingState(loading) {
+    isSending = loading;
+    sendBtn.disabled = loading;
+    if (loading) {
+      sendLabel.textContent = \'Mengirim\';
+      sendIcon.style.display = \'none\';
+    } else {
+      sendLabel.textContent = \'KIRIM\';
+      sendIcon.style.display = \'\';
     }
   }
 
-  // === KIRIM PESAN DENGAN CONTEXT PROJECT ===
+  async function loadHistoryFromGSheet() {
+    try {
+      const res = await fetch(`${WEBHOOK_URL}?sessionId=${sessionId}&projectId=${activeProjectId}&action=loadHistory`);
+      chatBox.innerHTML = \'\';
+      chatBox.appendChild(emptyState);
+      emptyState.style.display = \'flex\';
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.history?.length) {
+          emptyState.style.display = \'none\';
+          data.history.forEach(msg => appendMessage(msg.role, msg.content, msg.fileBase64, msg.fileName, msg.fileType));
+        }
+      }
+    } catch (err) {
+      chatBox.innerHTML = \'\';
+      chatBox.appendChild(emptyState);
+      emptyState.style.display = \'flex\';
+      console.warn(\'Gagal sinkronisasi riwayat:\', err);
+    }
+  }
+
   async function sendMessage() {
     const text = textarea.value.trim();
-    if (!text && !activeFileBase64) return;
-    if (sendBtn.disabled) return;
+    if ((!text && !activeFileBase64) || isSending) return;
 
-    const fileToSend = activeFileBase64;
-    const nameToSend = activeFileName;
-    const typeToSend = activeFileType;
-
-    appendMessage('user', text, fileToSend, nameToSend, typeToSend);
-    
-    textarea.value = '';
-    textarea.style.height = 'auto';
+    const fileToSend = activeFileBase64, nameToSend = activeFileName, typeToSend = activeFileType;
+    appendMessage(\'user\', text, fileToSend, nameToSend, typeToSend);
+    textarea.value = \'\';
+    textarea.style.height = \'auto\';
     clearFilePreview();
-    
-    sendBtn.disabled = true;
+    setSendingState(true);
     const loadingBubble = showLoadingIndicator();
 
     try {
-      // Sisipkan context sistem ke API payload agar Gemini tahu konteks project saat ini
-      const systemContext = `[Context: Kita sedang mendiskusikan project "${activeProjectName}"]. `;
-      
+      const systemContext = `[Context: Project "${activeProjectName}"]. `;
       const res = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          chatInput: systemContext + text, // Menggabungkan context project ke prompt asli
-          sessionId: sessionId,
-          projectId: activeProjectId,       // Dikirim ke n8n agar disimpan ke GSheet di kolom project yang benar
-          fileData: fileToSend,
-          fileName: nameToSend,
-          fileType: typeToSend
+        method: \'POST\',
+        headers: { \'Content-Type\': \'application/json\' },
+        body: JSON.stringify({
+          chatInput: systemContext + text,
+          sessionId, projectId: activeProjectId,
+          fileData: fileToSend, fileName: nameToSend, fileType: typeToSend
         })
       });
-
-      if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       loadingBubble.remove();
-
       const reply = data?.output || data?.text || data?.response || JSON.stringify(data);
-      appendMessage('bot', reply);
-
+      appendMessage(\'bot\', reply);
     } catch (err) {
       loadingBubble.remove();
-      appendMessage('bot', `⚠️ **Kesalahan Koneksi:**\n\`${err.message}\``);
+      appendMessage(\'bot\', `⚠️ **Koneksi gagal:**\n\`\`\`\n${err.message}\n\`\`\``);
     }
 
-    sendBtn.disabled = false;
+    setSendingState(false);
     textarea.focus();
   }
 
   function clearChat() {
-    chatBox.innerHTML = '';
+    if (!confirm(\'Reset session ini? Riwayat lokal akan dihapus.\')) return;
+    chatBox.innerHTML = \'\';
     chatBox.appendChild(emptyState);
-    emptyState.style.display = 'block';
+    emptyState.style.display = \'flex\';
     clearFilePreview();
   }
 
-  textarea.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+  textarea.addEventListener(\'keydown\', e => {
+    if (e.key === \'Enter\' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
 </script>
 
 </body>
-</html>
+</html>'''
+
+with open('/root/ai_workspace_v2.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("File saved:", len(html_content), "chars")
