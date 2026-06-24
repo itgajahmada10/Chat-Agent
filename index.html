@@ -6,85 +6,52 @@
   <title>AI Workspace Terminal</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <style>
     :root {
+      /* Core Palette */
       --primary: #4e2b5c;
       --primary-hover: #3b1e47;
-      --bg-body: #f1f5f9;
+      --accent-blue: #0284c7;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+
+      /* Light Theme Variables */
+      --bg-body: #f8fafc;
       --bg-card: #ffffff;
-      --border-color: #cbd5e1;
-      --text-main: #1e293b;
+      --bg-sidebar: #ffffff;
+      --bg-input: #f1f5f9;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
       --text-muted: #64748b;
       --bubble-ai: #f8fafc;
-      --bubble-user: #4e2b5c;
-      --accent-blue: #0284c7;
+      --bubble-user: var(--primary);
+      --scrollbar-thumb: #cbd5e1;
     }
 
-    /* === DARK MODE (Manual Toggle) === */
     [data-theme="dark"] {
-      --bg-body: #0f172a;
-      --bg-card: #1e293b;
-      --border-color: #334155;
-      --text-main: #e2e8f0;
-      --text-muted: #94a3b8;
-      --bubble-ai: #1e293b;
-      --bubble-user: #4e2b5c;
-    }
-    
-    [data-theme="dark"] #chat-box,
-    [data-theme="dark"] .sidebar-header,
-    [data-theme="dark"] .prompt-btn { 
-      background: #1e293b !important; 
-      color: var(--text-main) !important;
-    }
-    
-    [data-theme="dark"] #user-input,
-    [data-theme="dark"] .input-area,
-    [data-theme="dark"] .project-item,
-    [data-theme="dark"] .btn-icon-only { 
-      background: #172032 !important; 
-    }
-    
-    [data-theme="dark"] #user-input {
-      color: var(--text-main) !important;
+      /* Dark Theme Variables */
+      --bg-body: #090e17;
+      --bg-card: #111827;
+      --bg-sidebar: #111827;
+      --bg-input: #1f2937;
+      --border-color: #374151;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --bubble-ai: #1f2937;
+      --bubble-user: #6b3f7e;
+      --scrollbar-thumb: #4b5563;
     }
 
-    [data-theme="dark"] .project-item {
-      border-color: #334155 !important;
-    }
-
-    [data-theme="dark"] .project-item:hover,
-    [data-theme="dark"] .prompt-btn:hover { 
-      background: #2d1a3a !important; 
-    }
-
-    [data-theme="dark"] .btn-icon-only { 
-      color: var(--text-muted) !important; 
-      border-color: #334155 !important;
-    }
-    
-    [data-theme="dark"] .btn-icon-only:hover {
-      background: #1e293b !important;
-      color: var(--primary) !important;
-      border-color: var(--primary) !important;
-    }
-
-    [data-theme="dark"] .empty-icon {
-      background: #172032 !important;
-    }
-    
-    [data-theme="dark"] #empty-state h3 {
-      color: #cbd5e1 !important;
-    }
-
+    /* === BASE RESET & TYPOGRAPHY === */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
+    
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg-body);
@@ -93,613 +60,472 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-      transition: background-color 0.3s, color 0.3s;
+      padding: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      line-height: 1.5;
     }
 
+    /* === CUSTOM SCROLLBAR === */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* === LAYOUT === */
     .app-container {
       display: flex;
       width: 100%;
-      max-width: 1250px;
-      height: 90vh;
-      gap: 20px;
+      max-width: 1300px;
+      height: 92vh;
+      gap: 1.5rem;
     }
 
     /* === SIDEBAR === */
     .sidebar {
-      width: 300px;
-      background: var(--bg-card);
+      width: 280px;
+      background: var(--bg-sidebar);
       border-radius: 12px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: transform 0.3s ease, background-color 0.3s, border-color 0.3s;
+      flex-shrink: 0;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s, border-color 0.3s;
     }
+
     .sidebar-header {
-      padding: 18px 20px;
+      padding: 1.25rem;
       border-bottom: 1px solid var(--border-color);
-      background: #f8fafc;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: background-color 0.3s, border-color 0.3s;
+      background: var(--bg-input);
     }
+
     .sidebar-header h2 {
       font-family: 'Poppins', sans-serif;
-      font-size: 15px;
-      color: #9b68ad;
+      font-size: 0.95rem;
+      color: var(--primary);
     }
-    [data-theme="light"] .sidebar-header h2 { color: var(--primary); }
     [data-theme="dark"] .sidebar-header h2 { color: #d8b4e2; }
 
     .sidebar-content {
       flex: 1;
       overflow-y: auto;
-      padding: 16px;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 1.5rem;
     }
+
     .sidebar-section h3 {
       font-family: 'Poppins', sans-serif;
-      font-size: 11px;
+      font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.05em;
       color: var(--text-muted);
-      margin-bottom: 10px;
+      margin-bottom: 0.75rem;
     }
     
-    .project-list { display: flex; flex-direction: column; gap: 6px; }
+    .project-list, .prompt-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+    
     .project-item {
-      padding: 10px 12px;
+      padding: 0.75rem;
       border-radius: 8px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      font-size: 13px;
+      background: var(--bg-body);
+      border: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    .project-item:hover { border-color: var(--primary); background: #f5f3ff; }
+    
+    .project-item:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+    
     .project-item.active {
-      background: var(--primary) !important;
-      color: white !important;
-      border-color: var(--primary) !important;
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
     }
-    .project-item.active .project-name { color: white; }
-    .project-item.active .project-status { background: rgba(255,255,255,0.2); color: white; }
-    .project-item.loading { opacity: 0.6; pointer-events: none; }
-
-    .project-name { font-weight: 500; color: var(--text-main); font-size: 13px; }
+    
+    .project-name { font-weight: 500; font-size: 0.85rem; color: inherit; }
+    
     .project-status {
-      font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 4px;
+      font-size: 0.65rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
       font-weight: 600;
-      white-space: nowrap;
+      letter-spacing: 0.02em;
     }
-    .status-active { background: #dcfce7; color: #15803d; }
-    .status-planning { background: #fef9c3; color: #a16207; }
+    
+    /* Dynamic Status Colors */
+    .project-item:not(.active) .status-active { background: #dcfce7; color: #15803d; }
+    .project-item:not(.active) .status-planning { background: #fef9c3; color: #a16207; }
+    [data-theme="dark"] .project-item:not(.active) .status-active { background: rgba(21,128,61,0.2); color: #4ade80; }
+    [data-theme="dark"] .project-item:not(.active) .status-planning { background: rgba(161,98,7,0.2); color: #facc15; }
+    .project-item.active .project-status { background: rgba(255,255,255,0.2); color: #fff; }
 
-    [data-theme="dark"] .status-active { background: rgba(21, 128, 61, 0.2); color: #4ade80; }
-    [data-theme="dark"] .status-planning { background: rgba(161, 98, 7, 0.2); color: #facc15; }
-
-    .prompt-grid { display: flex; flex-direction: column; gap: 6px; }
     .prompt-btn {
       width: 100%;
-      padding: 9px 12px;
-      background: #ffffff;
+      padding: 0.75rem;
+      background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       text-align: left;
-      font-size: 12.5px;
+      font-size: 0.8rem;
       color: var(--text-main);
       cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
     }
-    .prompt-btn:hover { background: #f5f3ff; border-color: var(--primary); color: var(--primary) !important; }
+    .prompt-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--bg-body); }
 
-    /* === MOBILE TOGGLE === */
-    .btn-sidebar-toggle {
-      display: none;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 12px;
-      cursor: pointer;
-      font-size: 13px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-      align-items: center;
-      gap: 6px;
-    }
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 99;
-    }
-
-    /* === CHAT CONTAINER === */
+    /* === CHAT WORKSPACE === */
     .chat-wrapper {
       flex: 1;
       background: var(--bg-card);
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 25px rgba(0,0,0,0.05);
       border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       min-width: 0;
-      transition: background-color 0.3s, border-color 0.3s;
     }
 
     .chat-header {
-      background: var(--primary);
-      padding: 14px 20px;
+      background: var(--bg-card);
+      padding: 1rem 1.5rem;
       display: flex;
       align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
+      gap: 1rem;
+      border-bottom: 1px solid var(--border-color);
       flex-shrink: 0;
     }
+
     .chat-header .icon {
-      width: 32px; height: 32px;
-      background: rgba(255,255,255,0.12);
+      width: 36px; height: 36px;
+      background: var(--primary);
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      color: #fff;
     }
-    .chat-header h1 {
+
+    .chat-header-info h1 {
       font-family: 'Poppins', sans-serif;
-      font-size: 15px;
-      color: #ffffff;
+      font-size: 1rem;
       margin: 0;
+      color: var(--text-main);
     }
-    .chat-header p {
-      font-size: 11px;
-      color: rgba(255,255,255,0.65);
+
+    .chat-header-info p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
       margin: 0;
     }
     
-    .header-actions {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .header-actions { margin-left: auto; display: flex; align-items: center; gap: 0.75rem; }
 
     .session-badge {
-      background: rgba(0,0,0,0.2);
-      color: rgba(255,255,255,0.75);
-      padding: 3px 9px;
-      border-radius: 5px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      cursor: help;
-      flex-shrink: 0;
-    }
-
-    .btn-theme-toggle {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.25rem 0.5rem;
       border-radius: 6px;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-theme-toggle:hover {
-      background: rgba(255,255,255,0.15);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
     }
 
+    .btn-icon {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 6px;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-icon:hover { background: var(--bg-input); color: var(--text-main); border-color: var(--text-muted); }
+
+    /* === CHAT AREA === */
     #chat-box {
       flex: 1;
       overflow-y: auto;
-      padding: 20px 24px;
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      background: var(--bg-card);
+      gap: 1.5rem;
       scroll-behavior: smooth;
-      transition: background-color 0.3s;
     }
 
-    /* === EMPTY STATE === */
     #empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      padding: 40px 20px;
+      margin: auto;
       text-align: center;
       color: var(--text-muted);
     }
-    .empty-icon {
-      width: 64px; height: 64px;
-      background: #f1f5f9;
-      border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 16px;
-      transition: background-color 0.3s;
-    }
-    #empty-state h3 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 16px;
-      color: #475569;
-      margin-bottom: 6px;
-    }
-    #empty-state p { font-size: 13px; color: var(--text-muted); max-width: 260px; line-height: 1.5; }
+    
+    #empty-state svg { color: var(--border-color); margin-bottom: 1rem; width: 48px; height: 48px; }
+    #empty-state h3 { font-family: 'Poppins', sans-serif; font-size: 1.1rem; color: var(--text-main); margin-bottom: 0.5rem; }
+    #empty-state p { font-size: 0.85rem; max-width: 300px; line-height: 1.5; }
 
-    .msg-row { display: flex; gap: 10px; align-items: flex-start; }
+    .msg-row { display: flex; gap: 1rem; align-items: flex-start; }
     .msg-row.user { flex-direction: row-reverse; }
 
     .avatar {
-      width: 30px; height: 30px;
-      border-radius: 7px;
+      width: 32px; height: 32px;
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; flex-shrink: 0;
+      font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
       font-family: 'Poppins', sans-serif;
     }
-    .avatar.bot { background: #e2e8f0; color: var(--primary); }
-    [data-theme="dark"] .avatar.bot { background: #334155; color: #e2e8f0; }
-    .avatar.user { background: var(--accent-blue); color: white; }
+    .avatar.bot { background: var(--bg-input); color: var(--primary); border: 1px solid var(--border-color); }
+    .avatar.user { background: var(--accent-blue); color: #fff; }
 
-    .msg-col { display: flex; flex-direction: column; gap: 4px; max-width: min(85%, 720px); }
+    .msg-col { display: flex; flex-direction: column; gap: 0.25rem; max-width: 80%; }
     .msg-row.user .msg-col { align-items: flex-end; }
 
     .bubble {
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 14px;
-      line-height: 1.65;
+      padding: 0.875rem 1.125rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.6;
       word-break: break-word;
-      width: 100%;
     }
-    .bubble.user {
-      background: var(--bubble-user);
-      color: #ffffff;
-      border-top-right-radius: 3px;
-    }
-    .bubble.bot {
-      background: var(--bubble-ai);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-      border-top-left-radius: 3px;
-    }
+    
+    .bubble.user { background: var(--bubble-user); color: #fff; border-top-right-radius: 2px; }
+    .bubble.bot { background: var(--bubble-ai); color: var(--text-main); border: 1px solid var(--border-color); border-top-left-radius: 2px; }
+    
+    .bubble p { margin-bottom: 0.75rem; }
+    .bubble p:last-child { margin-bottom: 0; }
 
-    .msg-timestamp {
-      font-size: 10px;
-      color: var(--text-muted);
-      opacity: 0.7;
-      padding: 0 4px;
-    }
+    .msg-timestamp { font-size: 0.65rem; color: var(--text-muted); padding: 0 0.25rem; }
 
-    .bubble.bot table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 12px 0;
-      font-size: 13px;
-    }
-    .bubble.bot th, .bubble.bot td {
-      border: 1px solid var(--border-color);
-      padding: 7px 12px;
-      text-align: left;
-    }
-    .bubble.bot th { background: rgba(0,0,0,0.05); font-weight: 600; }
-    [data-theme="dark"] .bubble.bot th { background: rgba(255,255,255,0.05); }
-    .bubble.bot tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
-    [data-theme="dark"] .bubble.bot tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
-
-    .media-attachment {
-      background: rgba(0,0,0,0.04);
-      padding: 7px 11px;
-      border-radius: 6px;
-      margin-top: 6px;
-      font-size: 12.5px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid rgba(0,0,0,0.08);
-    }
-    .bubble.user .media-attachment { background: rgba(255,255,255,0.12); color: white; }
-    .media-attachment img { max-width: 100%; max-height: 180px; border-radius: 4px; display: block; }
-
-    /* Code Block Styling */
+    /* Markdown Styling Refinements */
+    .bubble.bot table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.85rem; border-radius: 8px; overflow: hidden; }
+    .bubble.bot th, .bubble.bot td { border: 1px solid var(--border-color); padding: 0.5rem 0.75rem; text-align: left; }
+    .bubble.bot th { background: var(--bg-input); font-weight: 600; }
+    
     .code-container {
-      background: #282c34;
+      background: #1e1e1e;
       border-radius: 8px;
       overflow: hidden;
-      margin: 12px 0;
-      border: 1px solid #3e4451;
+      margin: 1rem 0;
+      border: 1px solid #333;
     }
     .code-header {
-      background: #21252b;
-      color: #abb2bf;
-      font-size: 11px;
-      padding: 8px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #181a1f;
+      background: #2d2d2d;
+      color: #ccc;
+      font-size: 0.7rem;
+      padding: 0.5rem 1rem;
+      display: flex; justify-content: space-between; align-items: center;
       font-family: 'JetBrains Mono', monospace;
     }
+    .bubble pre { margin: 0; padding: 1rem; overflow-x: auto; }
+    .bubble pre code { background: transparent !important; color: #d4d4d4 !important; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+    
     .btn-copy-code {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #abb2bf;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 500;
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-family: 'Inter', sans-serif;
-      transition: 0.2s;
+      background: transparent; border: 1px solid #555; color: #ccc;
+      padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem; transition: 0.2s;
     }
-    .btn-copy-code:hover { background: rgba(255,255,255,0.15); color: #ffffff; }
+    .btn-copy-code:hover { background: #444; color: #fff; }
 
-    .bubble.bot pre { margin: 0; padding: 14px 16px; overflow-x: auto; }
-    .bubble.bot pre code { background: transparent !important; color: #abb2bf !important; padding: 0; font-size: 12.5px; font-family: 'JetBrains Mono', monospace; }
-
+    /* === INPUT AREA === */
     .preview-container {
       display: none;
-      padding: 10px 20px;
-      background: #f1f5f9;
+      padding: 0.75rem 1.5rem;
+      background: var(--bg-input);
       border-top: 1px solid var(--border-color);
       align-items: center;
-      gap: 12px;
+      gap: 1rem;
     }
-    [data-theme="dark"] .preview-container { background: #172032; }
     
-    .preview-wrapper { position: relative; display: inline-block; }
-    .preview-wrapper img { max-height: 70px; border-radius: 6px; border: 1px solid var(--border-color); display: block; }
+    .preview-wrapper { position: relative; }
+    .preview-wrapper img { max-height: 60px; border-radius: 6px; border: 1px solid var(--border-color); }
     .doc-preview-box {
-      width: 70px; height: 70px;
-      background: #e2e8f0; border-radius: 6px;
+      width: 60px; height: 60px; background: var(--bg-card); border-radius: 6px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-size: 10px; font-weight: bold; color: var(--text-muted); border: 1px solid var(--border-color);
+      font-size: 0.7rem; font-weight: bold; border: 1px solid var(--border-color);
     }
-    [data-theme="dark"] .doc-preview-box { background: #334155; }
     .btn-remove-preview {
-      position: absolute;
-      top: -5px; right: -5px;
-      background: #ef4444; color: white; border: none;
-      width: 17px; height: 17px; border-radius: 50%;
-      font-size: 10px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; font-weight: bold;
+      position: absolute; top: -6px; right: -6px;
+      background: var(--danger); color: white; border: none;
+      width: 18px; height: 18px; border-radius: 50%; font-size: 10px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .typing-indicator { display: flex; gap: 5px; padding: 6px 8px; align-items: center; }
-    .typing-indicator span {
-      width: 7px; height: 7px;
-      background: var(--text-muted);
-      border-radius: 50%;
-      animation: bounce 1.3s infinite ease-in-out;
-    }
-    .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
-    .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-
-    .file-warning { font-size: 11px; color: #ef4444; padding: 4px 0; }
 
     .input-area {
-      padding: 14px 20px;
-      background: #f8fafc;
+      padding: 1rem 1.5rem;
+      background: var(--bg-card);
       border-top: 1px solid var(--border-color);
       display: flex;
-      gap: 10px;
+      gap: 0.75rem;
       align-items: flex-end;
-      flex-shrink: 0;
-      transition: background-color 0.3s;
     }
+
     #user-input {
       flex: 1;
-      padding: 11px 14px;
+      padding: 0.75rem 1rem;
       border-radius: 8px;
       border: 1px solid var(--border-color);
-      background: #ffffff;
+      background: var(--bg-input);
       color: var(--text-main);
-      font-size: 14px;
-      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-family: inherit;
       resize: none;
-      max-height: 130px;
+      max-height: 150px;
       outline: none;
-      line-height: 1.5;
-      transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s;
+      transition: all 0.2s;
     }
-    #user-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(78,43,92,0.1); }
-    #user-input::placeholder { color: #94a3b8; }
+    
+    #user-input:focus {
+      border-color: var(--primary);
+      background: var(--bg-card);
+      box-shadow: 0 0 0 3px rgba(78, 43, 92, 0.1);
+    }
 
     .btn-action {
-      padding: 11px 18px;
+      padding: 0.75rem 1.25rem;
       border-radius: 8px;
       cursor: pointer;
       font-family: 'Poppins', sans-serif;
-      font-size: 13px;
+      font-size: 0.85rem;
       font-weight: 600;
       border: none;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      transition: all 0.2s;
-      flex-shrink: 0;
+      display: flex; align-items: center; gap: 0.5rem;
+      transition: background-color 0.2s, transform 0.1s;
     }
-    .btn-icon-only {
-      padding: 11px;
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      color: var(--text-muted);
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      flex-shrink: 0;
-    }
-    .btn-icon-only:hover { background: #f1f5f9; color: var(--primary); border-color: var(--primary); }
+    
+    #send-btn { background: var(--primary); color: white; }
+    #send-btn:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); }
+    #send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    #send-btn { background: var(--primary); color: white; min-width: 100px; justify-content: center; }
-    #send-btn:hover { background: var(--primary-hover); }
-    #send-btn:disabled { background: #94a3b8; cursor: not-allowed; }
-    #clear-btn:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
-
+    /* Responsive */
     @media (max-width: 768px) {
-      body { padding: 0; align-items: stretch; }
-      .app-container { flex-direction: column; height: 100dvh; gap: 0; padding: 0; max-width: 100%; }
+      body { padding: 0; }
+      .app-container { height: 100dvh; gap: 0; }
       .sidebar {
         position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
-        border-radius: 0 12px 12px 0; transform: translateX(-100%); width: 280px;
+        border-radius: 0; transform: translateX(-100%);
       }
       .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay { display: block; }
-      .sidebar-overlay.visible { display: block; }
-      .chat-wrapper { border-radius: 0; height: 100dvh; border: none; }
-      .btn-sidebar-toggle { display: flex !important; }
-      .bubble { font-size: 13.5px; }
-      .msg-col { max-width: 88%; }
-      #chat-box { padding: 14px 16px; }
-      .input-area { padding: 10px 12px; }
+      .chat-wrapper { border-radius: 0; border: none; }
+      .msg-col { max-width: 90%; }
     }
   </style>
 </head>
 <body>
 
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
-
-<div class="app-container">
+<main class="app-container">
   
-  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Workspace navigation">
-    <div class="sidebar-header">
+  <aside class="sidebar" id="sidebar" role="navigation">
+    <header class="sidebar-header">
       <h2>Workspace Directory</h2>
-    </div>
+    </header>
     <div class="sidebar-content">
-      <div class="sidebar-section">
-        <h3>Project Sedang Berjalan</h3>
-        <div class="project-list" id="project-list" role="listbox" aria-label="Daftar project">
-          <div class="project-item active" role="option" aria-selected="true" tabindex="0"
-               onclick="selectProject(this, 'n8n-automation', 'n8n Automation')"
-               onkeydown="if(event.key==='Enter')selectProject(this,'n8n-automation','n8n Automation')">
+      <section class="sidebar-section">
+        <h3>Active Projects</h3>
+        <div class="project-list" id="project-list" role="listbox">
+          <div class="project-item active" role="option" aria-selected="true" tabindex="0" onclick="selectProject(this, 'n8n-automation', 'n8n Automation')">
             <span class="project-name">n8n Automation</span>
             <span class="project-status status-active">Active</span>
           </div>
-          <div class="project-item" role="option" aria-selected="false" tabindex="0"
-               onclick="selectProject(this, 'gsheet-sync', 'Google Sheets Sync')"
-               onkeydown="if(event.key==='Enter')selectProject(this,'gsheet-sync','Google Sheets Sync')">
+          <div class="project-item" role="option" aria-selected="false" tabindex="0" onclick="selectProject(this, 'gsheet-sync', 'Google Sheets Sync')">
             <span class="project-name">Google Sheets Sync</span>
             <span class="project-status status-active">Active</span>
           </div>
-          <div class="project-item" role="option" aria-selected="false" tabindex="0"
-               onclick="selectProject(this, 'ai-debugger', 'AI Code Debugger')"
-               onkeydown="if(event.key==='Enter')selectProject(this,'ai-debugger','AI Code Debugger')">
+          <div class="project-item" role="option" aria-selected="false" tabindex="0" onclick="selectProject(this, 'ai-debugger', 'AI Code Debugger')">
             <span class="project-name">AI Code Debugger</span>
             <span class="project-status status-planning">Planning</span>
           </div>
         </div>
-      </div>
+      </section>
       
-      <div class="sidebar-section">
-        <h3>Quick Prompt Templates</h3>
+      <section class="sidebar-section">
+        <h3>Quick Prompts</h3>
         <div class="prompt-grid">
           <button class="prompt-btn" onclick="applyTemplate('Tolong analisis potongan file/script berikut ini:')">🔍 Analisis Script/File</button>
           <button class="prompt-btn" onclick="applyTemplate('Tolong perbaiki atau rapikan struktur database/tabel berikut:')">📊 Rapikan Data Tabel</button>
           <button class="prompt-btn" onclick="applyTemplate('Ubah struktur data mentah ini menjadi JSON valid:')">🛠️ Konversi ke JSON</button>
         </div>
-      </div>
+      </section>
     </div>
   </aside>
 
-  <div class="chat-wrapper">
-    <div class="chat-header">
-      <button class="btn-sidebar-toggle" id="sidebar-toggle-btn" onclick="openSidebar()" aria-label="Buka menu project" style="display:none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        Menu
-      </button>
+  <section class="chat-wrapper">
+    <header class="chat-header">
       <div class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M21.17 8H12V2.83"/>
         </svg>
       </div>
-      <div>
+      <div class="chat-header-info">
         <h1 id="active-project-title">n8n Automation</h1>
         <p>Data & Automation Assistant</p>
       </div>
       
       <div class="header-actions">
-        <span class="session-badge" id="session-label" title="Session ID aktif">SID-XXXX</span>
-        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode" title="Toggle Theme">
-          <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <span class="session-badge" id="session-label" title="Session ID">SID-XXXX</span>
+        <button id="theme-toggle-btn" class="btn-icon" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         </button>
       </div>
-    </div>
+    </header>
 
-    <div id="chat-box" role="log" aria-live="polite" aria-label="Riwayat percakapan">
+    <div id="chat-box" role="log" aria-live="polite">
       <div id="empty-state">
-        <div class="empty-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
-        </div>
-        <h3>Terminal Siap</h3>
-        <p>Kirim instruksi, upload dokumen atau gambar, atau pilih template di sidebar.</p>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <h3>Terminal Ready</h3>
+        <p>Kirim instruksi, unggah dokumen pendukung, atau pilih template di sidebar.</p>
       </div>
     </div>
 
     <div class="preview-container" id="preview-container">
       <div class="preview-wrapper" id="preview-wrapper"></div>
       <div>
-        <span style="font-size: 12px; color: var(--text-muted);" id="file-details"></span>
-        <div class="file-warning" id="file-warning" style="display:none;"></div>
+        <span style="font-size: 0.75rem; color: var(--text-muted);" id="file-details"></span>
+        <div id="file-warning" style="display:none; font-size: 0.75rem; color: var(--danger); margin-top:4px;"></div>
       </div>
     </div>
 
-    <div class="input-area">
+    <footer class="input-area">
       <input type="file" id="file-input" accept="image/*,.pdf,.csv,.xlsx,.docx" style="display: none;" onchange="handleFileSelect(event)">
       
-      <button class="btn-icon-only" title="Upload File (Gambar, PDF, Excel, CSV)" aria-label="Upload file" onclick="document.getElementById('file-input').click()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button class="btn-icon" title="Upload File" onclick="document.getElementById('file-input').click()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
         </svg>
       </button>
       
-      <textarea id="user-input" rows="1" placeholder="Ketik pesan atau paste gambar/file..." aria-label="Input pesan"></textarea>
+      <textarea id="user-input" rows="1" placeholder="Ketik pesan atau paste data..."></textarea>
       
-      <button id="clear-btn" class="btn-icon-only" title="Reset Session" aria-label="Reset percakapan" onclick="clearChat()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+      <button id="clear-btn" class="btn-icon" title="Clear Session" onclick="clearChat()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
         </svg>
       </button>
 
-      <button id="send-btn" class="btn-action" onclick="sendMessage()" aria-label="Kirim pesan">
-        <span id="send-label">KIRIM</span>
-        <svg id="send-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <button id="send-btn" class="btn-action" onclick="sendMessage()">
+        <span id="send-label">Kirim</span>
+        <svg id="send-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
         </svg>
       </button>
-    </div>
-  </div>
+    </footer>
+  </section>
 
-</div>
+</main>
 
 <script>
+  // Setup Marked.js
   marked.setOptions({ breaks: true, gfm: true });
 
-  /* === THEME TOGGLE LOGIC === */
+  // Theme Management
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     const icon = document.getElementById('theme-icon');
@@ -720,43 +546,7 @@
   const savedTheme = localStorage.getItem('ai_workspace_theme') || 'light';
   applyTheme(savedTheme);
 
-  /* === DOWNLOAD HTML LOGIC === */
-  function downloadHTMLCode(button) {
-    const textarea = button.parentElement.querySelector('.hidden-raw-code');
-    if (!textarea) return;
-
-    const code = textarea.value;
-    const blob = new Blob([code], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Presentasi_${formatTime().replace(':', '')}_${generateUUID().slice(0,4)}.html`;
-    
-    document.body.appendChild(a);
-    a.click();
-    
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    const originalText = button.innerHTML;
-    button.innerHTML = '✓ Berhasil Diunduh';
-    button.style.backgroundColor = '#10b981';
-    setTimeout(() => {
-        button.innerHTML = originalText;
-        button.style.backgroundColor = 'var(--primary)';
-    }, 2500);
-  }
-
-  function copyToClipboard(button) {
-    const code = button.closest('.code-container').querySelector('pre code').textContent;
-    navigator.clipboard.writeText(code).then(() => {
-      button.textContent = '✓ Tersalin';
-      button.style.color = '#10b981';
-      setTimeout(() => { button.textContent = 'Salin Kode'; button.style.color = '#abb2bf'; }, 2000);
-    });
-  }
-
+  // Core Utilities
   function generateUUID() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -766,10 +556,19 @@
   }
 
   function formatTime() {
-    const now = new Date();
-    return now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
   }
 
+  function copyToClipboard(button) {
+    const code = button.closest('.code-container').querySelector('pre code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      const originalText = button.textContent;
+      button.textContent = '✓ Copied';
+      setTimeout(() => { button.textContent = originalText; }, 2000);
+    });
+  }
+
+  // App State
   const USER_NAME = 'PU';
   let sessionId = localStorage.getItem('ai_chat_session_id') || generateUUID();
   localStorage.setItem('ai_chat_session_id', sessionId);
@@ -780,47 +579,27 @@
   let isSending = false;
 
   const WEBHOOK_URL = 'https://n8.waruna-group.co.id/webhook/ai-chat-endpoint';
+  
+  // DOM Elements
   const chatBox = document.getElementById('chat-box');
   const emptyState = document.getElementById('empty-state');
   const textarea = document.getElementById('user-input');
   const sendBtn = document.getElementById('send-btn');
   const sendLabel = document.getElementById('send-label');
-  const sendIcon = document.getElementById('send-icon');
-  const previewContainer = document.getElementById('preview-container');
-  const previewWrapper = document.getElementById('preview-wrapper');
-  const fileDetails = document.getElementById('file-details');
-  const fileWarning = document.getElementById('file-warning');
-
+  
   let activeFileBase64 = null, activeFileName = '', activeFileType = '';
   const MAX_FILE_SIZE_MB = 10;
 
-  window.addEventListener('DOMContentLoaded', () => {
-    loadHistoryFromGSheet();
-    if (window.innerWidth <= 768) document.getElementById('sidebar-toggle-btn').style.display = 'flex';
-  });
-
-  function openSidebar() {
-    document.getElementById('sidebar').classList.add('open');
-    document.getElementById('sidebar-overlay').classList.add('visible');
-  }
-  function closeSidebar() {
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('sidebar-overlay').classList.remove('visible');
-  }
-
+  // Auto-resize textarea
   textarea.addEventListener('input', () => {
     textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 130) + 'px';
+    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
   });
 
   async function selectProject(element, projectId, projectName) {
     if (element.classList.contains('active') || isSending) return;
-    document.querySelectorAll('.project-item').forEach(i => {
-      i.classList.remove('active');
-      i.setAttribute('aria-selected', 'false');
-    });
-    element.classList.add('active', 'loading');
-    element.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.project-item').forEach(i => i.classList.remove('active'));
+    element.classList.add('active');
 
     activeProjectId = projectId;
     activeProjectName = projectName;
@@ -828,70 +607,66 @@
 
     chatBox.innerHTML = '';
     const spinner = document.createElement('div');
-    spinner.style.cssText = 'text-align:center;padding:30px;color:#94a3b8;font-size:13px;';
+    spinner.style.cssText = 'text-align:center; padding:2rem; color:var(--text-muted); font-size:0.85rem;';
     spinner.textContent = 'Memuat riwayat...';
     chatBox.appendChild(spinner);
 
     await loadHistoryFromGSheet();
-    element.classList.remove('loading');
-    closeSidebar();
   }
 
+  // File Handling
+  function handleFileSelect(e) { processFile(e.target.files[0]); }
   textarea.addEventListener('paste', e => {
     const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-    for (const item of items) {
-      if (item.kind === 'file') processFile(item.getAsFile());
-    }
+    for (const item of items) if (item.kind === 'file') processFile(item.getAsFile());
   });
 
-  function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (file) processFile(file);
-  }
-
   function processFile(file) {
-    fileWarning.style.display = 'none';
+    if(!file) return;
+    const warning = document.getElementById('file-warning');
+    warning.style.display = 'none';
+    
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      fileWarning.textContent = `⚠️ File terlalu besar (maks ${MAX_FILE_SIZE_MB}MB). Pilih file lain.`;
-      fileWarning.style.display = 'block';
-      previewContainer.style.display = 'flex';
+      warning.textContent = `⚠️ File terlalu besar (maks ${MAX_FILE_SIZE_MB}MB).`;
+      warning.style.display = 'block';
+      document.getElementById('preview-container').style.display = 'flex';
       return;
     }
+
     const reader = new FileReader();
     activeFileName = file.name;
     activeFileType = file.type;
+    
     reader.onload = e => {
       activeFileBase64 = e.target.result;
-      previewWrapper.innerHTML = '';
+      const wrapper = document.getElementById('preview-wrapper');
+      
       if (file.type.startsWith('image/')) {
-        previewWrapper.innerHTML = `<img src="${activeFileBase64}" alt="Preview"><button class="btn-remove-preview" aria-label="Hapus file" onclick="clearFilePreview()">×</button>`;
+        wrapper.innerHTML = `<img src="${activeFileBase64}" alt="Preview"><button class="btn-remove-preview" onclick="clearFilePreview()">×</button>`;
       } else {
         const ext = file.name.split('.').pop().toUpperCase();
-        previewWrapper.innerHTML = `<div class="doc-preview-box">📄<br>${ext}</div><button class="btn-remove-preview" aria-label="Hapus file" onclick="clearFilePreview()">×</button>`;
+        wrapper.innerHTML = `<div class="doc-preview-box">${ext}</div><button class="btn-remove-preview" onclick="clearFilePreview()">×</button>`;
       }
-      fileDetails.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
-      previewContainer.style.display = 'flex';
+      document.getElementById('file-details').textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      document.getElementById('preview-container').style.display = 'flex';
     };
     reader.readAsDataURL(file);
   }
 
   function clearFilePreview() {
     activeFileBase64 = null; activeFileName = ''; activeFileType = '';
-    previewWrapper.innerHTML = '';
-    previewContainer.style.display = 'none';
-    fileWarning.style.display = 'none';
+    document.getElementById('preview-wrapper').innerHTML = '';
+    document.getElementById('preview-container').style.display = 'none';
     document.getElementById('file-input').value = '';
   }
 
   function applyTemplate(text) {
     textarea.value = text + ' ';
     textarea.focus();
-    textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 130) + 'px';
-    closeSidebar();
+    textarea.dispatchEvent(new Event('input'));
   }
 
-  function appendMessage(role, content, fileBase64 = null, fileName = '', fileType = '') {
+  function appendMessage(role, content) {
     emptyState.style.display = 'none';
     const row = document.createElement('div');
     row.classList.add('msg-row', role);
@@ -907,80 +682,31 @@
     bubble.classList.add('bubble', role);
 
     if (role === 'bot') {
-      let safeContent = content;
-      if (typeof safeContent !== 'string') safeContent = JSON.stringify(safeContent, null, 2);
+      let safeContent = typeof content !== 'string' ? JSON.stringify(content, null, 2) : content;
       
-      bubble.innerHTML = marked.parse(safeContent);
+      // VITAL FIX: Sanitize parsed markdown to prevent XSS
+      bubble.innerHTML = DOMPurify.sanitize(marked.parse(safeContent));
       
       bubble.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
         
-        let lang = 'CODE';
-        block.classList.forEach(cls => {
-            if(cls.startsWith('language-')) lang = cls.replace('language-', '').toUpperCase();
-        });
-
         const pre = block.parentElement;
-        if (!pre.parentElement.classList.contains('code-wrapper')) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'code-container code-wrapper';
-            
-            const rawCode = block.textContent;
-            
-            const isFullDocument = (lang === 'HTML' || lang === 'XML' || lang === 'CODE') && 
-                                   (rawCode.toLowerCase().includes('<!doctype html>') || rawCode.toLowerCase().includes('<html'));
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-container';
+        
+        let lang = 'CODE';
+        block.classList.forEach(cls => { if(cls.startsWith('language-')) lang = cls.replace('language-', '').toUpperCase(); });
 
-            if (isFullDocument) {
-                const header = document.createElement('div');
-                header.className = 'code-header';
-                header.innerHTML = `<span>🌐 Web Document Generated</span>`;
-                
-                const fileUI = document.createElement('div');
-                fileUI.style.cssText = 'padding: 24px; text-align: center; background: var(--bg-body); border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-top: 1px solid var(--border-color);';
-                fileUI.innerHTML = `
-                    <div style="font-size: 32px; margin-bottom: 12px;">📄</div>
-                    <div style="font-weight: 600; color: var(--text-main); font-size: 14px; margin-bottom: 6px;">File Presentasi Siap</div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px;">Kode sumber disembunyikan. Silakan unduh untuk melihat hasilnya.</div>
-                    <button onclick="downloadHTMLCode(this)" style="background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 12px; transition: background 0.2s;">
-                        ⬇️ Download .html
-                    </button>
-                    <textarea class="hidden-raw-code" style="display: none;">${rawCode}</textarea>
-                `;
-                
-                pre.style.display = 'none'; 
-                pre.parentNode.insertBefore(wrapper, pre);
-                wrapper.appendChild(header);
-                wrapper.appendChild(fileUI);
-                wrapper.appendChild(pre); 
-            } else {
-                const header = document.createElement('div');
-                header.className = 'code-header';
-                header.innerHTML = `<span>${lang}</span><button class="btn-copy-code" onclick="copyToClipboard(this)">Salin Kode</button>`;
-                
-                pre.parentNode.insertBefore(wrapper, pre);
-                wrapper.appendChild(header);
-                wrapper.appendChild(pre);
-            }
-        }
-      });
-      
-      bubble.querySelectorAll('table').forEach((table) => {
-         if(!table.parentElement.classList.contains('table-wrapper')) {
-             const wrapper = document.createElement('div');
-             wrapper.style.cssText = 'overflow-x:auto; margin:10px 0; border-radius:6px;';
-             wrapper.className = 'table-wrapper';
-             table.parentNode.insertBefore(wrapper, table);
-             wrapper.appendChild(table);
-         }
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        header.innerHTML = `<span>${lang}</span><button class="btn-copy-code" onclick="copyToClipboard(this)">Copy</button>`;
+        
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(header);
+        wrapper.appendChild(pre);
       });
     } else {
       bubble.textContent = content;
-      if (fileBase64) {
-        const att = document.createElement('div');
-        att.classList.add('media-attachment');
-        att.innerHTML = fileType.startsWith('image/') ? `<img src="${fileBase64}" alt="attachment">` : `📄 <strong>${fileName}</strong>`;
-        bubble.appendChild(att);
-      }
     }
 
     const ts = document.createElement('span');
@@ -993,58 +719,25 @@
     row.appendChild(col);
     chatBox.appendChild(row);
     chatBox.scrollTop = chatBox.scrollHeight;
-    return row;
-  }
-
-  function showLoadingIndicator() {
-    const row = document.createElement('div');
-    row.classList.add('msg-row', 'bot', 'loading-row');
-    const avatar = document.createElement('div');
-    avatar.classList.add('avatar', 'bot');
-    avatar.textContent = 'AI';
-    const col = document.createElement('div');
-    col.classList.add('msg-col');
-    const bubble = document.createElement('div');
-    bubble.classList.add('bubble', 'bot');
-    bubble.innerHTML = `<div class="typing-indicator" aria-label="AI sedang mengetik"><span></span><span></span><span></span></div>`;
-    col.appendChild(bubble);
-    row.appendChild(avatar);
-    row.appendChild(col);
-    chatBox.appendChild(row);
-    chatBox.scrollTop = chatBox.scrollHeight;
-    return row;
-  }
-
-  function setSendingState(loading) {
-    isSending = loading;
-    sendBtn.disabled = loading;
-    if (loading) {
-      sendLabel.textContent = 'Mengirim';
-      sendIcon.style.display = 'none';
-    } else {
-      sendLabel.textContent = 'KIRIM';
-      sendIcon.style.display = '';
-    }
   }
 
   async function loadHistoryFromGSheet() {
     try {
       const res = await fetch(`${WEBHOOK_URL}?sessionId=${sessionId}&projectId=${activeProjectId}&action=loadHistory`);
       chatBox.innerHTML = '';
-      chatBox.appendChild(emptyState);
-      emptyState.style.display = 'flex';
       if (res.ok) {
         const data = await res.json();
         if (data?.history?.length) {
-          emptyState.style.display = 'none';
-          data.history.forEach(msg => appendMessage(msg.role, msg.content, msg.fileBase64, msg.fileName, msg.fileType));
+          data.history.forEach(msg => appendMessage(msg.role, msg.content));
+        } else {
+          chatBox.appendChild(emptyState);
+          emptyState.style.display = 'block';
         }
       }
     } catch (err) {
       chatBox.innerHTML = '';
       chatBox.appendChild(emptyState);
-      emptyState.style.display = 'flex';
-      console.warn('History tidak dimuat. Sistem beroperasi normal.');
+      emptyState.style.display = 'block';
     }
   }
 
@@ -1052,41 +745,49 @@
     const text = textarea.value.trim();
     if ((!text && !activeFileBase64) || isSending) return;
 
-    const fileToSend = activeFileBase64, nameToSend = activeFileName, typeToSend = activeFileType;
-    appendMessage('user', text, fileToSend, nameToSend, typeToSend);
+    appendMessage('user', text);
     textarea.value = '';
     textarea.style.height = 'auto';
+    
+    const fileToSend = activeFileBase64, nameToSend = activeFileName, typeToSend = activeFileType;
     clearFilePreview();
-    setSendingState(true);
-    const loadingBubble = showLoadingIndicator();
+    
+    isSending = true;
+    sendBtn.disabled = true;
+    sendLabel.textContent = '...';
+
+    // Temp indicator
+    const tempBot = document.createElement('div');
+    tempBot.className = 'msg-row bot';
+    tempBot.innerHTML = `<div class="avatar bot">AI</div><div class="msg-col"><div class="bubble bot" style="color:var(--text-muted); font-style:italic;">Memproses...</div></div>`;
+    chatBox.appendChild(tempBot);
+    chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
-      const systemContext = `[Context: Project "${activeProjectName}"]. `;
       const res = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chatInput: systemContext + text,
+          chatInput: `[Context: Project "${activeProjectName}"]. ${text}`,
           sessionId, projectId: activeProjectId,
           fileData: fileToSend, fileName: nameToSend, fileType: typeToSend
         })
       });
       
-      if (!res.ok) throw new Error(`Server membalas dengan status HTTP ${res.status}`);
+      tempBot.remove();
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const rawData = await res.json();
-      
       const data = Array.isArray(rawData) ? rawData[0] : rawData;
-      
-      loadingBubble.remove();
-      const reply = data?.output || data?.text || data?.response || JSON.stringify(data);
-      appendMessage('bot', reply);
+      appendMessage('bot', data?.output || data?.text || data?.response || JSON.stringify(data));
       
     } catch (err) {
-      loadingBubble.remove();
-      appendMessage('bot', `⚠️ **Koneksi gagal:**\n\`\`\`text\n${err.message}\n\`\`\``);
+      tempBot.remove();
+      appendMessage('bot', `⚠️ **Error:**\n\`\`\`text\n${err.message}\n\`\`\``);
     }
 
-    setSendingState(false);
+    isSending = false;
+    sendBtn.disabled = false;
+    sendLabel.textContent = 'Kirim';
     textarea.focus();
   }
 
@@ -1094,13 +795,15 @@
     if (!confirm('Reset session ini? Riwayat lokal akan dihapus.')) return;
     chatBox.innerHTML = '';
     chatBox.appendChild(emptyState);
-    emptyState.style.display = 'flex';
+    emptyState.style.display = 'block';
     clearFilePreview();
   }
 
   textarea.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
+
+  window.addEventListener('DOMContentLoaded', loadHistoryFromGSheet);
 </script>
 
 </body>
